@@ -1,0 +1,19 @@
+.external_container{
+  text-align: center;
+  margin: 2%;
+  
+}
+
+.Grid{
+  height: 400px;
+
+}
+
+.Item{
+  height: 400px;
+}
+
+.Item2{
+  height: 100%;
+}
+
