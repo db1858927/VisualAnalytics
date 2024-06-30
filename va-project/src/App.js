@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import ScatterPlot from './ScatterPlot';
-import {Map} from './Map';
+import Map from './Map';
 import BoxPlot from './BoxPlot';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -41,14 +41,16 @@ function App() {
 
     <Box className='Box' sx={{ flexGrow: 1 }}>
     <Grid container spacing={2}>
-      <Grid className='Grid' item xs={4}>
-        <Item className='Item'> Map
-
+      <Grid  item xs={4}>
+        <Item className='Item'> 
+          Map
+          <div>
           <Map />
+          </div>
   
           </Item>
       </Grid>
-      <Grid className='Grid' item xs={4} >
+      <Grid  item xs={4} >
         <Item className='Item'>BoxPlot
 
           <BoxPlot />
