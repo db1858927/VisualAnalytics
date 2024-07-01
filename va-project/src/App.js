@@ -44,9 +44,9 @@ function App() {
       <Grid  item xs={4}>
         <Item className='Item'> 
           Map
-          <div>
+          <center>
           <Map />
-          </div>
+          </center>
   
           </Item>
       </Grid>

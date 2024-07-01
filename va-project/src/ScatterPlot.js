@@ -36,7 +36,7 @@ export default function ScatterPlot() {
       .attr("width", width);
      
       //Read the data
-d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv").then(data => {
+  d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv").then(data => {
 
   // Add X axis
   var x = d3.scaleLinear()
@@ -44,7 +44,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
     .range([ 0, width ])
   svg.append("g")
     .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(x).tickSize(-height*1.3).ticks(10))
+    .call(d3.axisBottom(x).tickSize(-height).ticks(10))
     .select(".domain").remove()
 
   // Add Y axis
@@ -53,7 +53,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
     .range([ height, 0])
     .nice()
   svg.append("g")
-    .call(d3.axisLeft(y).tickSize(-width*1.3).ticks(7))
+    .call(d3.axisLeft(y).tickSize(-width).ticks(7))
     .select(".domain").remove()
 
   // Customization
@@ -62,22 +62,22 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
   // Add X axis label:
   svg.append("text")
       .attr("text-anchor", "end")
-      .attr("x", width/2 )
-      .attr("y", height )
+      .attr("x", width/2 +50)
+      .attr("y", height + 30  )
       .text("Sepal Length");
 
   // Y axis label:
   svg.append("text")
       .attr("text-anchor", "end")
       .attr("transform", "rotate(-90)")
-      .attr("y",  20)
-      .attr("x",height/2 + 20)
+      .attr("y",  -30)
+      .attr("x",- height/2 + 50)
       .text("Petal Length")
 
   // Color scale: give me a specie name, I return a color
   var color = d3.scaleOrdinal()
-    .domain(["setosa", "versicolor", "virginica" ])
-    .range([ "#F8766D", "#00BA38", "#619CFF"])
+  .domain(["setosa", "versicolor", "virginica" ])
+  .range([ "#F8766D", "#00BA38", "#619CFF"])
 
   // Add dots
   svg.append('g')
