@@ -1,5 +1,11 @@
 # VisualAnalytics Tool for Air Quality Index
 
+## Prerequisites
+
+Before you begin, make sure you have the following prerequisites in place:
+
+NodeJS: The frontend node of our application is completely based on a NodeJS development server; therefore, if you don't have the last version of NodeJS installed, you can download it from the official website, based on your operating system.
+
 ## Installation and Launch
 
 For installing and launching the application, make sure you execute the following procedure:
