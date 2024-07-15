@@ -1,33 +1,30 @@
 .external_container{
-  text-align: center;
-  margin: 2%;
-  
+  max-width: 100%;
+  margin: 2px;
+  overflow: hidden; /* Evita il overflow che potrebbe causare la barra di scorrimento */
+  height: 98vh; /* Altezza pari all'altezza della finestra del browser */
+  box-sizing: border-box; /* Assicura che il padding e il bordo non aumentino la dimensione del contenitore */
+  padding: 0.5%;
 }
 
 .Grid{
-  height: 400px;
+  height: 350px;
 
+}
+
+
+
+h2 {
+  font-family: "Trebuchet MS", Tahoma, sans-serif;
+  color:white
 }
 
 .Item{
-  height: 400px;
+  height: calc(98vh / 2 - 2%) ;
 }
 
 .Item2{
-  height: 100%;
+  height: calc(98vh / 2 - 2%);
 }
 
-.tooltip {
-  position: absolute;
-  text-align: center;
-  width: 120px;
-  height: auto;
-  padding: 5px;
-  font: 12px sans-serif;
-  background: lightsteelblue;
-  border: 0px;
-  border-radius: 8px;
-  pointer-events: none;
-  box-shadow: 0px 0px 2px 0px #000;
-}
 

@@ -2,7 +2,7 @@ import React, { useRef, useEffect,useState } from 'react';
 import * as d3 from 'd3';
 import './App.css';
 
-const BoxPlot = ({ selectedRegion, allData, setSelectedRegion }) => {
+const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
     const svgRef = useRef();
     const tooltipRef = useRef();
     const legendRef = useRef();
@@ -10,6 +10,11 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion }) => {
     
 
     useEffect(() => {
+
+        
+        if (pollutant === '_total') {
+            return;
+        }
         const svg = d3.select(svgRef.current);
         svg.selectAll('*').remove();
 
@@ -61,10 +66,11 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion }) => {
         const allValues = data.map(d => +d.media_yy);
 
         const maxDataValue = d3.max(allValues);
+        const minDataValue = d3.min(allValues)
         const maxDomain = Math.max(maxDataValue, 40);
 
         const y = d3.scaleLinear()
-            .domain([0, maxDomain])
+            .domain([minDataValue -5, maxDataValue +5])
             .range([height, 0]);
 
         svgElement.append('g')
@@ -74,8 +80,8 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion }) => {
             .attr("text-anchor", "end")
             .attr("transform", "rotate(-90)")
             .attr("y", -32)
-            .attr("x", -height / 2 + 50)
-            .text("Concentration of NO2 (µg/m³)")
+            .attr("x", -height / 2 + 60)
+            .text(`Concentration of ${pollutant.replace('_', '')} ${selectedRegion ? `of ${selectedRegion} (µg/m³)` : ''}`)
             .attr("fill", "white")
             .style("font-size", "10px");
 
@@ -148,14 +154,46 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion }) => {
                     .style("fill", "none")
                     .attr("stroke", "white");
             }
+            if (pollutant == '_pm10'){
+                svgElement.append("line")
+                    .attr("x1", 0)
+                    .attr("x2", width)
+                    .attr("y1", y(40))
+                    .attr("y2", y(40))
+                    .attr("stroke", "red")
+                    .attr("stroke-dasharray", "5,5");
+            }
+            else if (pollutant == '_pm25'){
+                svgElement.append("line")
+                    .attr("x1", 0)
+                    .attr("x2", width)
+                    .attr("y1", y(20))
+                    .attr("y2", y(20))
+                    .attr("stroke", "red")
+                    .attr("stroke-dasharray", "5,5");
 
-            svgElement.append("line")
-                .attr("x1", 0)
-                .attr("x2", width)
-                .attr("y1", y(40))
-                .attr("y2", y(40))
-                .attr("stroke", "red")
-                .attr("stroke-dasharray", "5,5");
+            }else if (pollutant == '_no2'){
+                svgElement.append("line")
+                    .attr("x1", 0)
+                    .attr("x2", width)
+                    .attr("y1", y(90))
+                    .attr("y2", y(90))
+                    .attr("stroke", "red")
+                    .attr("stroke-dasharray", "5,5");
+            }else if (pollutant == '_o3'){
+                svgElement.append("line")
+                    .attr("x1", 0)
+                    .attr("x2", width)
+                    .attr("y1", y(100))
+                    .attr("y2", y(100))
+                    .attr("stroke", "red")
+                    .attr("stroke-dasharray", "5,5");
+            }
+            
+            else {
+                // Gestione di un caso non previsto, se necessario
+                console.log("Pollutant not recognized:", pollutant);
+              }
 
             // Mouse events
             // Gestione dell'evento mouseover e mouseout
@@ -179,6 +217,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion }) => {
                 tooltip.html(tooltipText)
                     .style("left", `${pageX}px`)
                     .style("top", `${pageY - 150}px`)
+                    .style("text-align", "right");
                     ;
             })
                 .on("mouseout", function (event) {
@@ -202,6 +241,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion }) => {
                     tooltip.html(tooltipText)
                         .style("left", `${pageX}px`)
                         .style("top", `${pageY - 150}px`)
+                        .style("text-align", "right");
                         ;
                 })
                     .on("mouseout", function (event) {
@@ -318,10 +358,10 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion }) => {
 
 
 
-    }, [selectedRegion, allData, setSelectedRegion]);
+    }, [selectedRegion, allData, setSelectedRegion, pollutant]);
 
     return (
-        <div style={{ display: 'flex', width: "640px", height: "350px", overflow: 'hidden', position: 'relative', top: 0, left: 0, marginBottom: '50px'}}>
+        <div style={{ display:'flex', width: "640px", height: "350px", overflow: 'hidden', position: 'relative', top: 0, left: 0}}>
             <svg ref={svgRef}></svg>
             <div ref={tooltipRef} style={{ opacity: 0 }}></div>
             <svg ref={legendRef}style={{ position: 'absolute', bottom: '10px' }} ></svg>

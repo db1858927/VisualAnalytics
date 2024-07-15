@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "7.21.11",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@fontsource/roboto": "^5.0.13",
@@ -15,11 +16,15 @@
     "d3": "^7.9.0",
     "d3-geo": "^3.1.1",
     "leaflet": "^1.9.4",
+    "ml-pca": "^4.1.1",
     "path": "^0.12.7",
     "react": "^18.3.1",
     "react-csv": "^2.2.2",
     "react-dom": "^18.3.1",
-    "react-scripts": "^3.0.1",
+    "react-scripts": "^5.0.1",
+    "simple-statistics": "^7.8.3",
+    "tsne": "^1.0.1",
+    "tsne-js": "^1.0.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -47,6 +52,7 @@
     ]
   },
   "devDependencies": {
-    "@types/d3": "^7.4.3"
+    "@types/d3": "^7.4.3",
+    "typings": "^0.6.10"
   }
 }
