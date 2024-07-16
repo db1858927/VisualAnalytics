@@ -350,12 +350,12 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
     <br>Means of no2: ${regionData[d.properties.name] && d3.mean(regionData[d.properties.name].NO2) !== undefined ? d3.mean(regionData[d.properties.name].NO2).toFixed(2) : 'undefined'}
     <br>Means of o3: ${regionData[d.properties.name] && d3.mean(regionData[d.properties.name].O3) !== undefined ? d3.mean(regionData[d.properties.name].O3.filter(d => d !== null)).toFixed(2) : 'undefined'}
     <br> ${regionMeans[d.properties.name] && regionMeans[d.properties.name].category !== undefined ? regionMeans[d.properties.name] && 'due to:' + regionMeans[d.properties.name].pollutant : 'undefined'}
-    <br>Year: 2010`)
+    <br>Year: ${year}`)
 
       }
       else {
 
-        tooltip.html(`Region: <b>${d.properties.name}</b><br>Mean: ${regionMeans[d.properties.name]}<br>Year: 2010`)
+        tooltip.html(`Region: <b>${d.properties.name}</b><br>Mean: ${regionMeans[d.properties.name]}<br>Year: ${year}`)
 
 
 
@@ -397,12 +397,12 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
     ${provinciaData[d.properties.prov_name] && d3.mean(provinciaData[d.properties.prov_name].NO2) !== undefined ? '<br> Means of no2: ' + d3.mean(provinciaData[d.properties.prov_name].NO2).toFixed(2) : ''}
      ${provinciaData[d.properties.prov_name] && d3.mean(provinciaData[d.properties.prov_name].O3) !== undefined ? '<br>Means of o3: ' + d3.mean(provinciaData[d.properties.prov_name].O3).toFixed(2) : ''}
      ${provinciaMeans[d.properties.prov_name] && provinciaMeans[d.properties.prov_name] !== undefined ? '<br>' + provinciaMeans[d.properties.prov_name].category : ''}  ${provinciaMeans[d.properties.prov_name] && provinciaMeans[d.properties.prov_name] !== undefined ? 'due to:' + provinciaMeans[d.properties.prov_name].pollutant : ''}
-    <br>Year: 2010`)
+    <br>Year: ${year}`)
 
       }
       else {
 
-        tooltip.html(`Provincia: <b>${d.properties.prov_name}</b><br>Mean: ${provinciaMeans[d.properties.prov_name]}<br>Year: 2010`)
+        tooltip.html(`Provincia: <b>${d.properties.prov_name}</b><br>Mean: ${provinciaMeans[d.properties.prov_name]}<br>Year: ${year}`)
 
 
       }
