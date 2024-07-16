@@ -5,12 +5,15 @@ const ScatterPlot = ({ year }) => {
   const svgRef = useRef();
   const legendRef = useRef();
 
+
   useEffect(() => {
     const margin = { top: 10, right: 30, bottom: 40, left: 50 };
     const width = 400 - margin.left - margin.right;
     const height = 320 - margin.top - margin.bottom;
 
     const svgElement = d3.select(svgRef.current);
+
+
 
     // Rimuovi tutti gli elementi precedenti dall'SVG
     svgElement.selectAll('*').remove();
@@ -90,6 +93,8 @@ const ScatterPlot = ({ year }) => {
         .style("opacity", 0)  // Imposta l'opacità iniziale a 0 per nasconderle
         .attr("class", "label");
 
+
+
       // Creazione dello scatter plot
       svg.selectAll("circle")
         .data(data)
@@ -99,23 +104,34 @@ const ScatterPlot = ({ year }) => {
         .attr("r", 5)
         .style("fill", d => colorScale(d['labels']))
         .style("opacity", 0.8)
-        .on("mouseover", function(event, d) {
+        .on("mouseover", function (event, d) {
           d3.select(this).transition().attr("r", 7);  // Opzionale: ingrandisci il punto
           const label = labels.filter(label => label['Regione'] === d['Regione']);
+
           label.transition().style("opacity", 0.8);
+          console.log(d['labels'])
+
+
         })
-        .on("mouseout", function(event, d) {
+        .on("mouseout", function (event, d) {
           d3.select(this).transition().attr("r", 5);  // Opzionale: riduci il punto
           labels.filter(label => label['Regione'] === d['Regione'])
             .transition()
             .style("opacity", 0);
+
+
         });
+
+
+
+
+
 
       const legendSvg = d3.select(legendRef.current);
 
       // Rimuovi tutti gli elementi presenti nella legenda prima di aggiungere quelli nuovi
       legendSvg.selectAll("*").remove();
-      const legendWidth = 100;
+      const legendWidth = 150;
       const legendHeight = 80;
 
       legendSvg
@@ -146,9 +162,65 @@ const ScatterPlot = ({ year }) => {
         .attr("x", 10 + size * 1.2)
         .attr("y", (d, i) => 10 + (i + 1) * (size + 5) + (size / 2))
         .style("fill", d => colorScale(d))
-        .text(d => d)
+        .text(function (d) {
+          // Logica condizionale per il testo da visualizzare
+          if (year === '2010') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Low level of pm2.5";
+            if(d == 2 ) return "Mid level of pm2.5";
+          } if (year === '2011') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Low level of pm2.5";
+            if(d == 2 ) return "Mid level of pm2.5";
+          } if (year === '2012') {
+            if(d == 1 ) return "Low level of pm2.5";
+            if(d == 0 ) return "Mid level of pm2.5";
+            if(d == 2 ) return "High level of pm2.5";
+          } if (year === '2013') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Mid level of pm2.5";
+            if(d == 2 ) return "Low level of pm2.5";
+          } if (year === '2014') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Low level of pm2.5";
+            if(d == 2 ) return "Mid level of pm2.5";
+          } if (year === '2015') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Low level of pm2.5";
+            if(d == 2 ) return "Mid level of pm2.5";
+          } if (year === '2016') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Low level of pm2.5";
+            if(d == 2 ) return "Mid level of pm2.5";
+          } if (year === '2017') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Low level of pm2.5";
+            if(d == 2 ) return "Mid level of pm2.5";
+          } if (year === '2018') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Low level of pm2.5";
+            if(d == 2 ) return "Mid level of pm2.5";
+          } if (year === '2019') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Low level of pm2.5";
+            if(d == 2 ) return "Mid level of pm2.5";
+          } if (year === '2012') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Low level of pm2.5";
+            if(d == 2 ) return "Mid level of pm2.5";
+          } if (year === '2021') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Low level of pm2.5";
+            if(d == 2 ) return "Mid level of pm2.5";
+          } if (year === '2022') {
+            if(d == 1 ) return "High level of pm2.5";
+            if(d == 0 ) return "Low level of pm2.5";
+            if(d == 2 ) return "Mid level of pm2.5";
+          } 
+        })
         .attr("text-anchor", "left")
-        .style("alignment-baseline", "middle");
+        .style("alignment-baseline", "middle")
+        .style("font-size", "10px");;
 
       legendSvg.append("text")
         .attr("x", 10)
@@ -164,6 +236,7 @@ const ScatterPlot = ({ year }) => {
   return (
     <div>
       <svg ref={svgRef} style={{ display: 'flex', top: 0, left: 0, height: '350px', width: '400px', overflow: 'visible' }}></svg>
+
       <svg ref={legendRef} style={{ position: 'absolute', bottom: '20px' }}></svg>
     </div>
   );

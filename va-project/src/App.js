@@ -60,7 +60,7 @@ function App() {
   const [selectedRegion, setSelectedRegion] = useState(null);
     const [allData, setAllData] = useState([]);
     const [pollutant, setPollutant] = React.useState('_pm10');
-    const [years, setYears] = React.useState('2015');
+    const [years, setYears] = React.useState('2010');
 
   const handleChangeYears = (event) => {
     setYears(event.target.value);

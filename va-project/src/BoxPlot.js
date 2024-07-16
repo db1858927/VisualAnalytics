@@ -286,11 +286,11 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                 .style("border-radius", "5px")
                 .style("box-shadow", "0 0 10px rgba(0,0,0,0.2)");
 
-            const size = 10;
+            const size = 15;
 
             // Dati per la leggenda: threshold, media, outliers
             const legendData = [
-                { label: "Threshold", symbol: "line", strokeDasharray: "5,5", color: "red" },
+                { label: `Limit`, symbol: "line", strokeDasharray: "5,5", color: "red", fontSize: "9px"},
                 { label: "Mean", symbol: "+", color: "white" },
                 { label: "Outliers", symbol: "circle", radius: 3, color: "white", fill: "none" }
             ];
