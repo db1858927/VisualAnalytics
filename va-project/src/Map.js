@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
   const svgRef = useRef();
@@ -12,8 +11,6 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
   const [dataLoaded, setDataLoaded] = useState(false); // Stato per verificare se i dati sono caricati
 
   useEffect(() => {
-
-    const svgElement = d3.select(svgRef.current);
 
     const margin = { top: 0, right: 50, bottom: 0, left: 0 };
     const width = 480 - margin.left - margin.right;
@@ -95,7 +92,6 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
 
         const categorizeValue = (value, pollutant) => {
           if (pollutant === 'NO2') {
-            if (value == 'undefined') return 'undefined'
             if (value <= 40) return 'Good';
             if (value <= 90) return 'Fair';
             if (value <= 120) return 'Moderate';
@@ -104,7 +100,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             if (value <= 800) return 'Extremely poor';
             return 'undefined'
           } else if (pollutant === 'PM10') {
-            if (value == 'undefined') return 'undefined'
+            
             if (value <= 20) return 'Good';
             if (value <= 40) return 'Fair';
             if (value <= 50) return 'Moderate';
@@ -113,7 +109,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             if (value <= 800) return 'Extremely poor';
             return 'undefined'
           } else if (pollutant === 'PM25') {
-            if (value == 'undefined') return 'undefined'
+            
             if (value <= 10) return 'Good';
             if (value <= 20) return 'Fair';
             if (value <= 25) return 'Moderate';
@@ -122,7 +118,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             if (value <= 800) return 'Extremely poor';
             return 'undefined'
           } else if (pollutant === 'O3') {
-            if (value == 'undefined') return 'undefined'
+            
             if (value <= 50) return 'Good';
             if (value <= 100) return 'Fair';
             if (value <= 130) return 'Moderate';
@@ -139,7 +135,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
           const region = d.Regione;
           const provincia = d.Provincia;
 
-          if (pollutant == '_total') {
+          if (pollutant === '_total') {
 
 
             const media_yy_pm10 = +d.pm10;
@@ -341,7 +337,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
         .style("font-size", "12px")
         .style("text-align", "right");
 
-      if (pollutant == '_total') {
+      if (pollutant === '_total') {
 
 
 
@@ -391,7 +387,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
         .style("opacity", .9)
         .style("font-size", "12px")
         .style("text-align", "right");
-      if (pollutant == '_total') {
+      if (pollutant === '_total') {
         tooltip.html(`Provincia: <b>${d.properties.prov_name}</b> ${provinciaData[d.properties.prov_name] && d3.mean(provinciaData[d.properties.prov_name].PM10) !== undefined ? '<br>Means of pm10: ' + d3.mean(provinciaData[d.properties.prov_name].PM10).toFixed(2) : ''}
     ${provinciaData[d.properties.prov_name] && d3.mean(provinciaData[d.properties.prov_name].PM25) !== undefined ? '<br>Means of pm2.5: ' + d3.mean(provinciaData[d.properties.prov_name].PM25).toFixed(2) : ''}
     ${provinciaData[d.properties.prov_name] && d3.mean(provinciaData[d.properties.prov_name].NO2) !== undefined ? '<br> Means of no2: ' + d3.mean(provinciaData[d.properties.prov_name].NO2).toFixed(2) : ''}
@@ -447,7 +443,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
         .attr("d", path.projection(projection))
         .style("fill", d => {
 
-          if (pollutant == '_total') {
+          if (pollutant === '_total') {
             const meanValue = isProvincia ? provinciaMeans[d.properties.prov_name] : regionMeans[d.properties.name];
 
             return meanValue !== undefined ? colorScale(meanValue.category) : "white";
@@ -531,7 +527,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
 
       let keys;
 
-      if (pollutant == '_total') {
+      if (pollutant === '_total') {
         keys = colorScale.domain().map((category) => {
           return {
             color: colorScale(category),
