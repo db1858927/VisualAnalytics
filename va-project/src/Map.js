@@ -50,10 +50,10 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
           .unknown("white");
 
       } else {
-        // Default or fallback scale in case pollutant doesn't match known types
+        
         return d3.scaleOrdinal()
-          .domain(['Good', 'Fair', 'Moderate', 'Poor', 'Very poor', 'Extremely poor']) // Example domain
-          .range(d3.schemeReds[6]) // Example range
+          .domain(['Good', 'Fair', 'Moderate', 'Poor', 'Very poor', 'Extremely poor'])
+          .range(d3.schemeReds[6]) 
           .unknown("white");
       }
     };
@@ -145,7 +145,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             const media_yy_no2 = +d.no2;
             const media_yy_o3 = +d.o3;
 
-            // Aggiungi le medie a regionData per ciascun agente inquinante
+            
             if (!regionData[region]) {
               regionData[region] = {
                 PM10: [],
@@ -240,7 +240,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             const meanNO2 = d3.mean(regionData[region].NO2);
             const meanO3 = d3.mean(regionData[region].O3);
 
-            // Categorizza le medie
+            
             const worstCategory = [
               { category: meanPM10 !== null ? categorizeValue(meanPM10, 'PM10') : null, pollutant: 'PM10' },
               { category: meanPM2_5 !== null ? categorizeValue(meanPM2_5, 'PM25') : null, pollutant: 'PM25' },
@@ -249,20 +249,20 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             ].reduce((prev, current) => {
               const order = ['Good', 'Fair', 'Moderate', 'Poor', 'Very poor', 'Extremely poor'];
 
-              // Se il current.category è null, manteniamo il prev
+              
               if (current.category === null) {
                 return prev;
               }
 
-              // Se prev.category è null, passiamo al current
+              
               if (prev.category === null) {
                 return current;
               }
 
-              // Confrontiamo le categorie
+              
               return order.indexOf(current.category) > order.indexOf(prev.category) ? current : prev;
             });
-            // Assegna la categoria peggiore e l'inquinante corrispondente a regionMeans
+            
             regionMeans[region] = {
               category: worstCategory.category,
               pollutant: worstCategory.pollutant
@@ -279,7 +279,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             const meanNO2 = d3.mean(provinciaData[provincia].NO2.filter(d => d !== null));
             const meanO3 = d3.mean(provinciaData[provincia].O3.filter(d => d !== null));
 
-            // Categorizza le medie
+            
             const worstCategory = [
               { category: categorizeValue(meanPM10, 'PM10'), pollutant: 'PM10' },
               { category: categorizeValue(meanPM2_5, 'PM25'), pollutant: 'PM25' },
@@ -290,7 +290,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
               return order.indexOf(current.category) > order.indexOf(prev.category) ? current : prev;
 
             });
-            // Assegna la categoria peggiore e l'inquinante corrispondente a provinciaMeans
+            
             provinciaMeans[provincia] = {
               category: worstCategory.category,
               pollutant: worstCategory.pollutant
@@ -304,11 +304,11 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
 
         initialFeaturesRef.current = topo.features;
 
-        setDataLoaded(true); // Imposta lo stato a true dopo il caricamento dei dati
+        setDataLoaded(true); 
 
         createLegend(colorScale);
 
-        // Aggiorna la mappa se i dati sono stati caricati e una regione è selezionata
+       
         if (selectedRegion) {
           updateProvinciaMap(selectedRegion);
         } else if (!hasClickedRegion) {
@@ -430,7 +430,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
       if (!isProvincia) {
         if (!Array.isArray(features)) {
           console.error('Features is not an array:', features);
-          // Gestisci l'errore o reimposta features a un valore predefinito
+         
           features = [];
           return;
         }
@@ -501,7 +501,6 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
       "Trentino-Alto Adige": "Trentino-Alto Adige/S\u00fcdtirol",
       "Friuli Venezia Giulia": "Friuli-Venezia Giulia",
       "Aosta": "Valle d'Aosta/Vall\u00e9e d'Aoste"
-      // Aggiungi altri nomi secondo necessità
     };
 
     const clickRegion = function (event, d) {
@@ -556,7 +555,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
 
       const legendSvg = d3.select(legendRef.current);
 
-      // Rimuovi tutti gli elementi presenti nella legenda prima di aggiungere quelli nuovi
+      
       legendSvg.selectAll("*").remove();
 
       legendSvg

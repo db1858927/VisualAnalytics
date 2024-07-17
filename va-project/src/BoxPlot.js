@@ -133,7 +133,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
 
 
 
-            // Add mean
+           
             const meanplus = svgElement.append("text")
                 .attr("x", center)
                 .attr("y", y(mean))
@@ -191,12 +191,11 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
             }
             
             else {
-                // Gestione di un caso non previsto, se necessario
+                
                 console.log("Pollutant not recognized:", pollutant);
               }
 
-            // Mouse events
-            // Gestione dell'evento mouseover e mouseout
+           
 
             let tooltipText = `<b>${region}</b> <br>Median: ${median}<br>Mean: ${mean}<br>Min: ${min}<br>Max: ${max}`;
 
@@ -288,20 +287,20 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
 
             const size = 15;
 
-            // Dati per la leggenda: threshold, media, outliers
+            
             const legendData = [
                 { label: `Limit`, symbol: "line", strokeDasharray: "5,5", color: "red", fontSize: "9px"},
                 { label: "Mean", symbol: "+", color: "white" },
                 { label: "Outliers", symbol: "circle", radius: 3, color: "white", fill: "none" }
             ];
 
-            // Aggiungi i vari elementi della leggenda
+            
             const legendItems = legendSvg.selectAll("legendItem")
                 .data(legendData)
                 .enter().append("g")
                 .attr("transform", (d, i) => `translate(10, ${30 + i * (size + 10)})`);
 
-            // Aggiungi i simboli alla leggenda
+           
             legendItems.each(function (d) {
                 if (d.symbol === "line") {
                     d3.select(this).append("line")
@@ -329,7 +328,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                 }
             });
 
-            // Aggiungi le etichette alla leggenda
+           
             legendItems.append("text")
                 .attr("x", size * 1.3)
                 .attr("y", size / 2)
@@ -340,7 +339,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                 .attr("fill", "white")
                 .style("alignment-baseline", "middle");
 
-            // Aggiungi titolo leggenda
+            
             legendSvg.append("text")
                 .attr("x", 10)
                 .attr("y", 15)
@@ -351,7 +350,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
 
         
 
-        // Chiamata alla funzione createLegend per aggiungere la leggenda
+       
         createLegend();
 
 

@@ -13,9 +13,6 @@ const ScatterPlot = ({ year }) => {
 
     const svgElement = d3.select(svgRef.current);
 
-
-
-    // Rimuovi tutti gli elementi precedenti dall'SVG
     svgElement.selectAll('*').remove();
 
     const svg = svgElement
@@ -26,25 +23,25 @@ const ScatterPlot = ({ year }) => {
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
     d3.csv(`./tsne-results/Regions/tsne_results_${year}.csv`).then(data => {
-      // Converti i dati
+     
       data.forEach(d => {
         d['Component 1'] = +d['Component 1'];
         d['Component 2'] = +d['Component 2'];
       });
 
-      // Supponendo che i tuoi dati abbiano una proprietà 'cluster' per il colore
+    
       const clusters = Array.from(new Set(data.map(d => d.labels))).sort();
       const colorScale = d3.scaleOrdinal()
         .domain(clusters)
-        .range(d3.schemeCategory10);  // Usa una scala di colori categorici
+        .range([ "#F8766D", "#00BA38", "#619CFF"])
 
-      // Definizione della scala per gli assi X e Y
+      
       const xExtent = d3.extent(data, d => d['Component 1']);
       const yExtent = d3.extent(data, d => d['Component 2']);
       const xMargin = (xExtent[1] - xExtent[0]) * 0.05;
       const yMargin = (yExtent[1] - yExtent[0]) * 0.05;
 
-      // Crea le scale
+      
       const x = d3.scaleLinear()
         .domain([xExtent[0] - xMargin, xExtent[1] + xMargin])
         .range([0, width]);
@@ -53,11 +50,11 @@ const ScatterPlot = ({ year }) => {
         .domain([yExtent[0] - yMargin, yExtent[1] + yMargin])
         .range([height, 0]);
 
-      // Creazione degli assi X e Y
+      
       const xAxis = d3.axisBottom(x);
       const yAxis = d3.axisLeft(y);
 
-      // Aggiunta degli assi al grafico
+      
       svg.append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
@@ -85,17 +82,16 @@ const ScatterPlot = ({ year }) => {
       const labels = svg.selectAll("text.label")
         .data(data)
         .enter().append("text")
-        .attr("x", d => x(d['Component 1']) + 8)  // Spostamento orizzontale per evitare sovrapposizione con i punti
+        .attr("x", d => x(d['Component 1']) + 8)  
         .attr("y", d => y(d['Component 2']) + 2)
         .text(d => d['Regione'])
         .style("font-size", "12px")
         .style("fill", "white")
-        .style("opacity", 0)  // Imposta l'opacità iniziale a 0 per nasconderle
+        .style("opacity", 0)  
         .attr("class", "label");
 
 
 
-      // Creazione dello scatter plot
       svg.selectAll("circle")
         .data(data)
         .enter().append("circle")
@@ -105,7 +101,7 @@ const ScatterPlot = ({ year }) => {
         .style("fill", d => colorScale(d['labels']))
         .style("opacity", 0.8)
         .on("mouseover", function (event, d) {
-          d3.select(this).transition().attr("r", 7);  // Opzionale: ingrandisci il punto
+          d3.select(this).transition().attr("r", 7);  
           const label = labels.filter(label => label['Regione'] === d['Regione']);
 
           label.transition().style("opacity", 0.8);
@@ -114,7 +110,7 @@ const ScatterPlot = ({ year }) => {
 
         })
         .on("mouseout", function (event, d) {
-          d3.select(this).transition().attr("r", 5);  // Opzionale: riduci il punto
+          d3.select(this).transition().attr("r", 5);  
           labels.filter(label => label['Regione'] === d['Regione'])
             .transition()
             .style("opacity", 0);
@@ -129,7 +125,7 @@ const ScatterPlot = ({ year }) => {
 
       const legendSvg = d3.select(legendRef.current);
 
-      // Rimuovi tutti gli elementi presenti nella legenda prima di aggiungere quelli nuovi
+     
       legendSvg.selectAll("*").remove();
       const legendWidth = 150;
       const legendHeight = 80;
@@ -150,9 +146,9 @@ const ScatterPlot = ({ year }) => {
         .data(clusters)
         .enter()
         .append("circle")
-        .attr("cx", 10 + size / 2) // centro del cerchio
-        .attr("cy", (d, i) => 10 + (i + 1) * (size + 5) + size / 2) // centro del cerchio
-        .attr("r", size / 2) // raggio del cerchio
+        .attr("cx", 10 + size / 2) 
+        .attr("cy", (d, i) => 10 + (i + 1) * (size + 5) + size / 2) 
+        .attr("r", size / 2) 
         .style("fill", d => colorScale(d));
 
       legendSvg.selectAll("mylabels")
@@ -163,7 +159,7 @@ const ScatterPlot = ({ year }) => {
         .attr("y", (d, i) => 10 + (i + 1) * (size + 5) + (size / 2))
         .style("fill", d => colorScale(d))
         .text(function (d) {
-          // Logica condizionale per il testo da visualizzare
+          
           if (year === '2010') {
             if(d == 1 ) return "High level of pm2.5";
             if(d == 0 ) return "Low level of pm2.5";

@@ -7,19 +7,19 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
     useEffect(() => {
         const svg = d3.select(svgRef.current);
         svg.selectAll('*').remove();
-        // Margin convention
+        
         const margin = { top: 10, right: 30, bottom: 40, left: 60 };
         const width = 760 - margin.left - margin.right;
         const height = 320 - margin.top - margin.bottom;
 
-        // Create SVG element
+        
         const svgElement = svg
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-        // Array of CSV file paths (each representing a year)
+       
         const files = [
            
             `./years${pollutant}/dati_2010.csv`,
@@ -35,16 +35,16 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
             `./years${pollutant}/dati_2020.csv`,
             `./years${pollutant}/dati_2021.csv`,
             `./years${pollutant}/dati_2022.csv`,
-            // Add more file paths as needed
+           
         ];
 
-        // Helper function to convert CSV rows
+        
         function rowConverter(year) {
             return function (d) {
                 if (pollutant == '_total') {
                     return {
-                        date: new Date(year, 0), // Use year from file name
-                        region: d.Regione, // Region from CSV data
+                        date: new Date(year, 0), 
+                        region: d.Regione, 
                         no2: d.no2 !== '' ? +d.no2 : null,
                         pm10: d.pm10 !== '' ? +d.pm10 : null,
                         pm25: d.pm25 !== '' ? +d.pm25 : null,
@@ -54,8 +54,8 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                 }
                 else {
                     return {
-                        date: new Date(year, 0), // Use year from file name
-                        region: d.Regione, // Region from CSV data
+                        date: new Date(year, 0), 
+                        region: d.Regione, 
                         value: +d.media_yy
 
                     };
@@ -87,10 +87,10 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                     .unknown("white");
 
             } else {
-                // Default or fallback scale in case pollutant doesn't match known types
+                
                 return d3.scaleThreshold()
-                    .domain([0, 100]) // Example domain
-                    .range(['#ffffff', '#000000']) // Example range
+                    .domain([0, 100]) 
+                    .range(['#ffffff', '#000000']) 
                     .unknown("white");
             }
         };
@@ -98,16 +98,16 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
 
         const pollutants = ['pm10', 'pm25', 'no2', 'o3'];
         const colorScale_ = d3.scaleOrdinal()
-            .domain(pollutants) // Assuming pollutants is an array of pollutant types
+            .domain(pollutants) 
             .range(d3.schemeCategory10);
 
-        // Load and process all CSV files
+        
         Promise.all(files.map(file => {
-            const year = parseInt(file.match(/(\d{4})\.csv$/)[1]); // Extract year from file name
-            return d3.csv(file, rowConverter(year)); // Pass year to rowConverter
+            const year = parseInt(file.match(/(\d{4})\.csv$/)[1]); 
+            return d3.csv(file, rowConverter(year)); 
         }))
             .then(datasets => {
-                // Combine all datasets into a single array
+                
                 const allData = datasets.flat();
 
                 const filteredData = allData.filter(d => {
@@ -116,7 +116,7 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                         : selectedRegion
                             ? d.region === selectedRegion
 
-                            : true; // Se nessuna regione è selezionata, restituisci tutti i dati
+                            : true; 
                 });
                 let scatterData;
                 let colorScale;
@@ -130,16 +130,16 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                         .nice()
                         .range([height, 0]);
 
-                    // Add X axis (only once)
+                   
                     svgElement.append("g")
                         .attr("class", "x-axis")
                         .attr("transform", `translate(0,${height})`);
 
-                    // Add Y axis (only once)
+                    
                     svgElement.append("g")
                         .attr("class", "y-axis");
 
-                    // Add Y axis label (only once)
+                    
                     svgElement.append("text")
                         .attr("class", "y-axis-label")
                         .attr("text-anchor", "end")
@@ -159,57 +159,57 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                     
                        
 
-                    // Start processing each pollutant
+                    
 
                     pollutants.forEach((pollutant, index) => {
-                        // Filter data for the current pollutant
+                        
                         const dataForPollutant = filteredData.filter(d => d[pollutant] !== null);
 
-                        // Group data by region and calculate mean for each region
+                       
                         const dataByRegion = d3.rollup(
                             dataForPollutant,
                             v => d3.mean(v, d => d[pollutant]),
                             d => d.date.getFullYear(),
                         );
 
-                        // Format data for scatter plot
+                       
                         const scatterData = Array.from(dataByRegion, ([year, value]) => ({ year, value }));
 
-                        // Check if scatterData is not empty before proceeding
+                        
                         if (scatterData.length > 0) {
-                            // Sort scatterData by value (ascending)
+                            
                             scatterData.sort((a, b) => a.value - b.value);
 
-                            // Update domain of x scale
+                           
                             x.domain(scatterData.map(d => String(d.year)));
                             y.domain([d3.min(scatterData, d => d.value) - 5, d3.max(scatterData, d => d.value) + 5]);
 
-                            // Update X axis
+                           
                             svgElement.select(".x-axis")
                                 .call(d3.axisBottom(x).tickSizeOuter(0));
 
-                            // Update Y axis
+                            
                             svgElement.select(".y-axis")
                                 .call(d3.axisLeft(y));
 
-                            // Update Y axis label
+                            
                             svgElement.select(".y-axis-label")
                                 .text(`Average oncentration of all pollutants (µg/m³)`);
 
-                            // Add line connecting the points
+                            
                             svgElement.append("path")
                                 .datum(scatterData)
                                 .attr("fill", "none")
                                 .attr("stroke", colorScale_(pollutant))
                                 .attr("stroke-width", 1.5)
                                 .attr("d", d3.line()
-                                    .x(d => x(String(d.year)) + x.bandwidth() / 2) // Adjust x position for band scale
+                                    .x(d => x(String(d.year)) + x.bandwidth() / 2) 
                                     .y(d => y(d.value))
                                 );
 
                             colorScale = getColorScale(`_${pollutant}`);
 
-                            // Add circles for scatter plot
+                            
                             svgElement.selectAll(`.circle-${pollutant}`)
                                 .data(scatterData)
                                 .enter()
@@ -219,7 +219,7 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                                 .attr("cy", d => y(d.value))
                                 .attr("r", 5)
                                 .attr("fill", d => colorScale(d.value));
-                            // Array of labels corresponding to pollutants
+                            
 
                         }
 
@@ -230,11 +230,11 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
 
                 } else {
 
-                    // Group filtered data by year and calculate averages
+                   
                     const dataByYear = d3.rollup(
                         filteredData,
                         v => d3.mean(v, d => d.value),
-                        d => d.date.getFullYear() // Group by year from date
+                        d => d.date.getFullYear() 
                     );
 
 
@@ -242,13 +242,13 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
 
                     colorScale = getColorScale(pollutant);
 
-                    // Format data for scatter plot
+                    
                     scatterData = Array.from(dataByYear, ([year, value]) => ({ year, value }));
 
-                    // Sort scatterData by year
+                   
                     scatterData.sort((a, b) => a.year - b.year);
 
-                    // Create scales
+                   
                     const x = d3.scaleBand()
                         .domain(scatterData.map(d => String(d.year)))
                         .range([0, width])
@@ -259,15 +259,15 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                         .nice()
                         .range([height, 0]);
 
-                    // Clear existing content before updating
+                    
                     svgElement.selectAll("*").remove();
 
-                    // Add X axis
+                    
                     svgElement.append("g")
                         .attr("transform", `translate(0,${height})`)
                         .call(d3.axisBottom(x).tickSizeOuter(0));
 
-                    // Add Y axis
+                   
                     svgElement.append("g")
                         .call(d3.axisLeft(y));
 
@@ -280,23 +280,23 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                         .attr("fill", "white")
                         .style("font-size", "10px");
 
-                    // Add line connecting the points
+                    
                     svgElement.append("path")
                         .datum(scatterData)
                         .attr("fill", "none")
                         .attr("stroke", colorScale_(pollutant.replace('_', '')))
                         .attr("stroke-width", 1.5)
                         .attr("d", d3.line()
-                            .x(d => x(String(d.year)) + x.bandwidth() / 2) // Adjust x position for band scale
+                            .x(d => x(String(d.year)) + x.bandwidth() / 2) 
                             .y(d => y(d.value))
                         );
 
-                    // Add circles for scatter plot
+                    
                     svgElement.selectAll("circle")
                         .data(scatterData)
                         .enter()
                         .append("circle")
-                        .attr("cx", d => x(String(d.year)) + x.bandwidth() / 2) // Adjust x position for band scale
+                        .attr("cx", d => x(String(d.year)) + x.bandwidth() / 2) 
                         .attr("cy", d => y(d.value))
                         .attr("r",  5)
                         .attr("fill", d => colorScale(d.value))
@@ -309,7 +309,7 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                             d3.select(this).transition().attr("r", 5);
                         })
                         .on("click", function(event, d) {
-                            console.log("Clicked data:", d); // Debugging line to check the data
+                            console.log("Clicked data:", d); 
                             if (d && d.year) {
                               setYears(String(d.year));
                             } else {
@@ -322,29 +322,29 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
 
                 const labels = pollutants.map(p => `${p}`);
 
-                // Add legend
+               
                 const legend = svgElement.append("g")
                     .attr("class", "legend")
-                    .attr("transform", `translate(${width - 250}, -10)`); // Adjust position as needed
+                    .attr("transform", `translate(${width - 250}, -10)`); 
 
-                // Add colored rectangles to legend
+               
                 legend.selectAll("line")
                     .data(labels)
                     .enter()
                     .append("line")
-                    .attr("x1", (d, i) => i * 70) // Adjust spacing between elements
+                    .attr("x1", (d, i) => i * 70) 
                     .attr("y1", 15)
-                    .attr("x2", (d, i) => i * 70 + 10) // Adjust spacing between elements
+                    .attr("x2", (d, i) => i * 70 + 10) 
                     .attr("y2", 15)
                     .attr("stroke", d => colorScale_(d))
                     .attr("stroke-width", 2);
 
-                // Add text labels to legend
+               
                 legend.selectAll("text")
                     .data(labels)
                     .enter()
                     .append("text")
-                    .attr("x", (d, i) => i * 70 + 15) // Adjust spacing between elements
+                    .attr("x", (d, i) => i * 70 + 15) 
                     .attr("y", 15)
                     .text(d => d)
                     .attr("fill", "white")
