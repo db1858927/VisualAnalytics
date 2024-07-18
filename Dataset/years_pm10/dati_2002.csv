@@ -1,0 +1,92 @@
+Regione,Provincia,Lon,Lat,media_yy
+Piemonte,Torino,7.5602,45.1758,31.0
+Piemonte,Torino,7.6782,45.0758,67.0
+Piemonte,Torino,7.64416666666667,45.0758333333333,44.0
+Piemonte,Biella,8.0564,45.5588,26.0
+Piemonte,Biella,8.1876,45.569,28.0
+Lombardia,Varese,8.83449244,45.58288714,46.0
+Lombardia,Varese,8.80417,45.83611,27.0
+Lombardia,Como,9.08361,45.80444,44.0
+Lombardia,Como,9.22444444444444,45.8105555555556,47.0
+Lombardia,Como,8.96666666666667,45.7830555555556,46.0
+Lombardia,Sondrio,9.870556,46.167222,41.0
+Lombardia,Milano,9.08111111111111,45.5427777777778,51.0
+Lombardia,Milano,8.8925,45.4675,53.0
+Lombardia,Milano,9.22222222222222,45.4725,58.0
+Lombardia,Milano,9.195833,45.462778,59.0
+Lombardia,Milano,9.3275,45.482778,50.0
+Lombardia,Milano,9.50638888888889,45.6172222222222,51.0
+Lombardia,Bergamo,9.665,45.6863888888889,54.0
+Lombardia,Bergamo,9.61888888888889,45.6588888888889,48.0
+Lombardia,Bergamo,9.6115435,45.62058256,46.0
+Lombardia,Bergamo,9.591389,45.518333,44.0
+Lombardia,Brescia,10.22361,45.54083,51.0
+Lombardia,Brescia,10.20083,45.655,47.0
+Lombardia,Cremona,9.67805555555555,45.3702777777778,41.0
+Lombardia,Cremona,10.0333333333333,45.1383333333333,53.0
+Lombardia,Lecco,9.395833,45.849444,42.0
+Lombardia,Lecco,9.40619194,45.69795956,52.0
+Lombardia,Lodi,9.485556,45.305278,50.0
+Lombardia,Monza e della Brianza,9.15694,45.66083,53.0
+Trentino-Alto Adige,Bolzano,11.33997,46.49547,24.0
+Trentino-Alto Adige,Bolzano,11.4258333333333,46.8947222222222,17.0
+Trentino-Alto Adige,Trento,10.84449,45.89147,28.0
+Trentino-Alto Adige,Trento,11.03941,45.89244,24.0
+Trentino-Alto Adige,Trento,11.105,46.0686111111111,33.0
+Veneto,Venezia,12.262222,45.499167,46.0
+Friuli Venezia Giulia,Trieste,13.7780555555556,45.6494444444444,35.0
+Friuli Venezia Giulia,Trieste,13.7875,45.623056,36.0
+Liguria,Genova,8.94611111111111,44.4038888888889,66.0
+Liguria,Genova,8.99154,44.39489,32.0
+Liguria,Genova,8.87194444444444,44.4158333333333,44.0
+Emilia-Romagna,Piacenza,9.70138888888889,45.0452777777778,35.0
+Emilia-Romagna,Parma,10.3161111111111,44.8025,62.0
+Emilia-Romagna,Parma,10.33167,44.79361,39.0
+Emilia-Romagna,Parma,10.33667,44.78833,34.0
+Emilia-Romagna,Reggio nell'Emilia,10.624444,44.699722,49.0
+Emilia-Romagna,Reggio nell'Emilia,10.664722,44.690833,47.0
+Emilia-Romagna,Modena,10.88365,44.79943,36.0
+Emilia-Romagna,Modena,10.9422222222222,44.6588888888889,44.0
+Emilia-Romagna,Modena,10.9291666666667,44.6411111111111,37.0
+Emilia-Romagna,Bologna,11.3580555555556,44.5119444444444,51.0
+Emilia-Romagna,Bologna,11.32833,44.49972,44.0
+Emilia-Romagna,Bologna,11.3336111111111,44.4694444444444,21.0
+Emilia-Romagna,Ferrara,11.61306,44.8425,36.0
+Emilia-Romagna,Ferrara,11.6363888888889,44.8427777777778,37.0
+Emilia-Romagna,Ferrara,11.961111,44.839722,26.0
+Emilia-Romagna,Ravenna,11.8875,44.2908333333333,35.0
+Emilia-Romagna,Ravenna,12.2513888888889,44.4455555555556,57.0
+Emilia-Romagna,Ravenna,12.18667,44.42861,45.0
+Emilia-Romagna,Ravenna,12.2066666666667,44.4233333333333,40.0
+Emilia-Romagna,Ravenna,12.225556,44.42,39.0
+Emilia-Romagna,Forli'-Cesena,12.048889,44.219167,43.0
+Emilia-Romagna,Rimini,12.6594444444444,44.0055555555556,46.0
+Emilia-Romagna,Rimini,12.553333,44.0625,40.0
+Emilia-Romagna,Rimini,12.57556,44.05222,38.0
+Toscana,Firenze,11.27222,43.77306,52.0
+Toscana,Firenze,11.2875,43.78667,43.0
+Toscana,Firenze,11.24917,43.76528,38.0
+Toscana,Pisa,10.7627777777778,43.6902777777778,31.0
+Toscana,Pisa,10.41056,43.71389,40.0
+Toscana,Prato,11.09194,43.87278,28.0
+Marche,Ancona,13.51,43.6,31.0
+Lazio,Roma,12.4680555555556,41.8630555555556,53.0
+Lazio,Roma,12.4775,41.8958333333333,48.0
+Lazio,Roma,12.50895,41.883075,44.0
+Lazio,Roma,12.506947,41.932892,31.0
+Lazio,Frosinone,13.348977,41.639609,27.0
+Abruzzo,Pescara,14.21306,42.46639,75.0
+Abruzzo,Pescara,14.2225,42.45944,51.0
+Abruzzo,Pescara,14.23472,42.45639,53.0
+Campania,Napoli,14.27167,40.85361,35.0
+Sicilia,Palermo,13.302198,38.120539,28.0
+Sicilia,Palermo,13.350252,38.111034,38.0
+Sicilia,Palermo,13.354215,38.124382,43.0
+Sicilia,Palermo,13.36556,38.11028,45.0
+Sicilia,Palermo,13.39167,38.09889,32.0
+Sicilia,Palermo,13.331559,38.1517,32.0
+Sicilia,Palermo,13.34417,38.13694,43.0
+Sicilia,Palermo,13.329306,38.121681,49.0
+Sardegna,Cagliari,8.995833,39.226944,36.0
+Sardegna,Cagliari,9.016667,39.07,32.0
+Sardegna,Sud Sardegna,8.386111,39.208611,40.0

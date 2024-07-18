@@ -1,0 +1,363 @@
+Regione,Provincia,Lon,Lat,media_yy
+Piemonte,Torino,7.2454,45.4302,88.0
+Piemonte,Torino,7.5602,45.1758,55.0
+Piemonte,Torino,7.5496,45.0069,51.0
+Piemonte,Torino,7.648888889,45.02472222,40.0
+Piemonte,Torino,7.6362,44.9513,46.0
+Piemonte,Vercelli,8.2835,45.7132,50.0
+Piemonte,Vercelli,8.4024,45.3189,56.0
+Piemonte,Novara,8.6206,45.4383,48.0
+Piemonte,Cuneo,8.0333,44.7037,48.0
+Piemonte,Cuneo,7.5382,44.3818,65.0
+Piemonte,Cuneo,8.1695,44.4122,48.0
+Piemonte,Asti,8.2055,44.9089,41.0
+Piemonte,Asti,8.3103,44.808,69.0
+Piemonte,Alessandria,8.6232,44.9203,40.0
+Piemonte,Alessandria,9.0524,44.7633,77.0
+Piemonte,Biella,8.0564,45.5588,60.0
+Piemonte,Biella,8.1876,45.569,56.0
+Piemonte,Biella,8.188611111,45.65333333,49.0
+Piemonte,Verbano-Cusio-Ossola,8.2559,46.3148,69.0
+Piemonte,Verbano-Cusio-Ossola,8.268888889,46.01194444,57.0
+Piemonte,Verbano-Cusio-Ossola,8.5655,45.9303,59.0
+Valle d'Aosta,Aosta,7.29889,45.73028,47.0
+Valle d'Aosta,Aosta,7.32417,45.73583,45.0
+Valle d'Aosta,Aosta,7.76643,45.5966,55.0
+Valle d'Aosta,Aosta,7.23528,45.81583,77.0
+Valle d'Aosta,Aosta,6.97778,45.72917,81.0
+Lombardia,Varese,8.75,45.61667,44.0
+Lombardia,Varese,9.024167,45.626944,45.0
+Lombardia,Varese,8.80417,45.83611,57.0
+Lombardia,Como,9.12583,45.72722,43.0
+Lombardia,Sondrio,10.3725,46.470278,51.0
+Lombardia,Sondrio,9.56639,46.13167,47.0
+Lombardia,Sondrio,9.88028,46.16861,41.0
+Lombardia,Milano,8.84861,45.54667,54.0
+Lombardia,Milano,9.23583,45.47833,42.0
+Lombardia,Milano,9.3275,45.482778,44.0
+Lombardia,Bergamo,9.466667,45.683333,41.0
+Lombardia,Bergamo,9.556389,45.4975,50.0
+Lombardia,Bergamo,9.6115435,45.62058256,48.0
+Lombardia,Brescia,10.1775,45.873889,42.0
+Lombardia,Brescia,10.299444,45.248889,46.0
+Lombardia,Brescia,10.480833,45.463333,60.0
+Lombardia,Brescia,10.20083,45.655,48.0
+Lombardia,Pavia,9.164722,45.193889,56.0
+Lombardia,Pavia,9.009444,45.000278,42.0
+Lombardia,Pavia,8.915,45.040833,50.0
+Lombardia,Cremona,9.705,45.36722,47.0
+Lombardia,Cremona,10.045833,45.142222,43.0
+Lombardia,Cremona,9.940278,45.148333,46.0
+Lombardia,Mantova,10.69194,45.41083,51.0
+Lombardia,Mantova,11.07083,44.99694,52.0
+Lombardia,Lecco,9.385,46.137222,50.0
+Lombardia,Lecco,9.395833,45.849444,61.0
+Lombardia,Lecco,9.496944,45.913056,93.0
+Lombardia,Lecco,9.286111,46.015833,62.0
+Lombardia,Lecco,9.34889,45.84083,60.0
+Lombardia,Lodi,9.58611,45.30861,49.0
+Lombardia,Lodi,9.66694,45.235,48.0
+Lombardia,Lodi,9.49528589,45.30278678,40.0
+Lombardia,Monza e della Brianza,9.27444,45.58111,42.0
+Trentino-Alto Adige,Bolzano,11.34222222,46.5,42.0
+Trentino-Alto Adige,Bolzano,11.65408,46.71492,31.0
+Trentino-Alto Adige,Bolzano,11.94403,46.79735,39.0
+Trentino-Alto Adige,Bolzano,11.22711,46.26733,41.0
+Trentino-Alto Adige,Bolzano,11.20083333,46.57694444,34.0
+Trentino-Alto Adige,Bolzano,10.85906,46.61947,41.0
+Trentino-Alto Adige,Bolzano,11.34014,46.43483,39.0
+Trentino-Alto Adige,Bolzano,11.16163,46.662,37.0
+Trentino-Alto Adige,Bolzano,11.17,46.6475,34.0
+Trentino-Alto Adige,Bolzano,11.43317,46.58967,94.0
+Trentino-Alto Adige,Bolzano,11.27527778,46.33083333,32.0
+Trentino-Alto Adige,Bolzano,11.42583333,46.89472222,36.0
+Trentino-Alto Adige,Bolzano,11.62111,46.67917,18.0
+Trentino-Alto Adige,Trento,11.45389,46.05184,42.0
+Trentino-Alto Adige,Trento,11.11343,46.19684,46.0
+Trentino-Alto Adige,Trento,10.84449,45.89147,47.0
+Trentino-Alto Adige,Trento,11.03941,45.89244,45.0
+Trentino-Alto Adige,Trento,11.1262,46.06293,43.0
+Trentino-Alto Adige,Trento,10.95804,46.08253,105.0
+Veneto,Verona,11.03778,45.59,79.0
+Veneto,Verona,11.13361111,45.25611111,46.0
+Veneto,Verona,11.311389,45.183611,51.0
+Veneto,Verona,11.28611,45.4,51.0
+Veneto,Verona,10.91222,45.4625,46.0
+Veneto,Verona,10.97,45.41611111,35.0
+Veneto,Vicenza,11.569167,45.848333,101.0
+Veneto,Vicenza,11.736667,45.760833,62.0
+Veneto,Vicenza,11.42583333,45.50111111,50.0
+Veneto,Vicenza,11.368611,45.714444,67.0
+Veneto,Vicenza,11.30527778,45.63916667,61.0
+Veneto,Vicenza,11.539722,45.560556,45.0
+Veneto,Vicenza,11.521944,45.531944,41.0
+Veneto,Belluno,12.216944,46.141389,44.0
+Veneto,Belluno,11.80305556,46.33972222,96.0
+Veneto,Belluno,11.905833,46.030833,41.0
+Veneto,Belluno,12.360833,46.1625,64.0
+Veneto,Treviso,11.95,45.7,50.0
+Veneto,Treviso,11.90055556,45.88916667,76.0
+Veneto,Treviso,12.308056,45.890556,51.0
+Veneto,Treviso,12.510278,45.836944,52.0
+Veneto,Treviso,12.238611,45.6725,49.0
+Veneto,Venezia,12.27916667,45.2,56.0
+Veneto,Venezia,12.78722222,45.69444444,49.0
+Veneto,Venezia,12.15361111,45.525,39.0
+Veneto,Venezia,12.12888889,45.44194444,44.0
+Veneto,Venezia,12.591667,45.630278,44.0
+Veneto,Venezia,12.313889,45.429444,49.0
+Veneto,Venezia,12.262222,45.499167,50.0
+Veneto,Padova,11.643056,45.29,58.0
+Veneto,Padova,11.665833,45.226667,60.0
+Veneto,Padova,11.75111111,45.24472222,53.0
+Veneto,Padova,11.841944,45.371944,63.0
+Veneto,Padova,11.89056,45.43333,50.0
+Veneto,Padova,11.902222,45.600278,61.0
+Veneto,Rovigo,12.06194,45.04667,52.0
+Veneto,Rovigo,11.553333,45.103889,51.0
+Veneto,Rovigo,11.791111,45.039722,51.0
+Veneto,Rovigo,11.78333,45.07472,46.0
+Friuli Venezia Giulia,Udine,13.10777778,45.67611111,52.0
+Friuli Venezia Giulia,Udine,13.06689,46.22101,49.0
+Friuli Venezia Giulia,Udine,12.93167,46.50722,105.0
+Friuli Venezia Giulia,Udine,13.393333,45.973333,64.0
+Friuli Venezia Giulia,Udine,13.011111,46.401944,52.0
+Friuli Venezia Giulia,Udine,13.275,45.81944444,57.0
+Friuli Venezia Giulia,Udine,13.24069,46.06612,55.0
+Friuli Venezia Giulia,Udine,13.2253,46.0351,57.0
+Friuli Venezia Giulia,Gorizia,13.544722,45.843889,77.0
+Friuli Venezia Giulia,Gorizia,13.57222222,45.93111111,53.0
+Friuli Venezia Giulia,Gorizia,13.616127,45.936478,56.0
+Friuli Venezia Giulia,Gorizia,13.528889,45.81,65.0
+Friuli Venezia Giulia,Trieste,13.79451,45.61874,65.0
+Friuli Venezia Giulia,Trieste,13.77222,45.65722,56.0
+Friuli Venezia Giulia,Pordenone,12.46833333,46.26305556,48.0
+Friuli Venezia Giulia,Pordenone,12.61871,45.95767,46.0
+Friuli Venezia Giulia,Pordenone,12.65806,45.96222,46.0
+Liguria,Savona,8.2015,44.39048,47.0
+Liguria,Savona,8.43169,44.28709,67.0
+Liguria,Savona,8.48542,44.31538,70.0
+Liguria,Genova,8.92737,44.41816,51.0
+Liguria,Genova,8.99154,44.39489,66.0
+Liguria,Genova,8.9459,44.55387,49.0
+Liguria,Genova,9.18487,44.56468,67.0
+Liguria,La Spezia,9.89769,44.18309,70.0
+Liguria,La Spezia,9.84394,44.11603,50.0
+Liguria,La Spezia,9.79871,44.12365,73.0
+Emilia-Romagna,Piacenza,10.019167,44.989444,41.0
+Emilia-Romagna,Piacenza,9.36693,44.73473,69.0
+Emilia-Romagna,Piacenza,9.83028,44.82389,50.0
+Emilia-Romagna,Piacenza,9.669167,45.038333,44.0
+Emilia-Romagna,Parma,10.370833,44.926111,49.0
+Emilia-Romagna,Parma,10.288889,44.6575,66.0
+Emilia-Romagna,Parma,10.33167,44.79361,53.0
+Emilia-Romagna,Reggio nell'Emilia,10.733889,44.516111,41.0
+Emilia-Romagna,Reggio nell'Emilia,10.663889,44.873056,46.0
+Emilia-Romagna,Reggio nell'Emilia,10.664722,44.690833,48.0
+Emilia-Romagna,Reggio nell'Emilia,10.430278,44.299722,86.0
+Emilia-Romagna,Modena,10.88365,44.79943,46.0
+Emilia-Romagna,Modena,10.87777778,44.52638889,48.0
+Emilia-Romagna,Modena,11.17795,44.92784,51.0
+Emilia-Romagna,Modena,10.90633,44.65061,45.0
+Emilia-Romagna,Modena,11.00388889,44.48666667,55.0
+Emilia-Romagna,Bologna,11.355,44.48333,48.0
+Emilia-Romagna,Bologna,11.286111,44.5,46.0
+Emilia-Romagna,Bologna,11.639444,44.662222,52.0
+Emilia-Romagna,Ferrara,11.299722,44.738333,51.0
+Emilia-Romagna,Ferrara,11.649722,44.825,50.0
+Emilia-Romagna,Ferrara,11.961111,44.839722,50.0
+Emilia-Romagna,Ferrara,11.942222,44.741667,49.0
+Emilia-Romagna,Ravenna,11.981381,44.526485,45.0
+Emilia-Romagna,Ravenna,12.332222,44.283889,53.0
+Emilia-Romagna,Ravenna,11.87056,44.28333,44.0
+Emilia-Romagna,Forli'-Cesena,12.048889,44.219167,43.0
+Emilia-Romagna,Forli'-Cesena,12.06166667,44.13027778,42.0
+Emilia-Romagna,Forli'-Cesena,12.4025,44.095833,39.0
+Emilia-Romagna,Forli'-Cesena,12.224722,43.9275,85.0
+Emilia-Romagna,Rimini,12.648333,43.843889,43.0
+Emilia-Romagna,Rimini,12.553333,44.0625,39.0
+Emilia-Romagna,Rimini,12.6275,43.932778,71.0
+Emilia-Romagna,Rimini,12.42,44.013056,56.0
+Toscana,Massa Carrara,10.09611111,44.08,46.0
+Toscana,Massa Carrara,10.097222,44.078333,55.0
+Toscana,Lucca,10.45361,43.86889,66.0
+Toscana,Lucca,10.61916667,43.83777778,43.0
+Toscana,Lucca,10.245,43.883889,24.0
+Toscana,Pistoia,11.00694,43.91611,54.0
+Toscana,Pistoia,10.76916667,43.87666667,22.0
+Toscana,Firenze,11.323889,43.789167,61.0
+Toscana,Firenze,11.24917,43.76528,54.0
+Toscana,Firenze,11.19278,43.75694,52.0
+Toscana,Livorno,10.41361111,43.50083333,78.0
+Toscana,Livorno,10.34777778,43.51388889,64.0
+Toscana,Livorno,10.321667,43.52,64.0
+Toscana,Livorno,10.46722222,43.38944444,50.0
+Toscana,Pisa,10.401667,43.738889,50.0
+Toscana,Pisa,10.881667,43.247778,75.0
+Toscana,Pisa,10.63888889,43.66333333,34.0
+Toscana,Pisa,10.771667,43.713056,40.0
+Toscana,Arezzo,11.88889,43.46111,50.0
+Toscana,Arezzo,11.90167,43.66028,78.0
+Toscana,Grosseto,11.11917,42.77861,59.0
+Toscana,Grosseto,11.09417,42.67056,70.0
+Toscana,Prato,11.09194,43.87278,52.0
+Umbria,Perugia,12.57639,43.35278,54.0
+Umbria,Perugia,12.36611,43.10306,55.0
+Umbria,Perugia,12.44194,43.08889,43.0
+Umbria,Perugia,12.37472,43.10444,48.0
+Umbria,Perugia,12.71333,42.74472,45.0
+Umbria,Perugia,12.46806,43.06694,58.0
+Umbria,Terni,12.52222222,42.53527778,47.0
+Umbria,Terni,12.65083,42.56,50.0
+Umbria,Terni,12.63972222,42.56111111,48.0
+Umbria,Terni,12.62361,42.58194,50.0
+Umbria,Terni,12.65167,42.55222,44.0
+Marche,Pesaro e Urbino,13.1325,43.76777778,47.0
+Marche,Pesaro e Urbino,12.91889,43.89333,46.0
+Marche,Ancona,13.50861,43.61167,60.0
+Marche,Ancona,13.34194,43.59889,38.0
+Marche,Ancona,13.3875,43.63333,53.0
+Marche,Ancona,13.37056,43.63611,43.0
+Marche,Ancona,13.39,43.62056,61.0
+Marche,Ancona,12.95222,43.46806,68.0
+Marche,Macerata,13.67472,43.33556,66.0
+Marche,Macerata,13.42861,43.285,60.0
+Marche,Ascoli Piceno,13.61944,42.84861,70.0
+Marche,Ascoli Piceno,13.87944444,42.94444444,54.0
+Lazio,Viterbo,11.87643,42.736572,67.0
+Lazio,Rieti,12.962063,42.572591,78.0
+Lazio,Rieti,12.857794,42.404687,55.0
+Lazio,Roma,11.908954,42.157856,87.0
+Lazio,Roma,11.802485,42.091593,64.0
+Lazio,Roma,13.004056,41.730447,42.0
+Lazio,Roma,12.266327,41.889451,47.0
+Lazio,Roma,12.506947,41.932892,45.0
+Lazio,Roma,12.568652,41.857716,43.0
+Lazio,Roma,12.65848,41.929474,42.0
+Lazio,Roma,12.541618,41.886019,46.0
+Lazio,Roma,12.533667,41.947654,39.0
+Lazio,Roma,12.475387,41.893971,36.0
+Lazio,Latina,12.913043,41.464027,54.0
+Lazio,Frosinone,13.348977,41.639609,83.0
+Abruzzo,L'Aquila,13.38306,42.36417,64.0
+Abruzzo,Teramo,13.70944,42.65722,51.0
+Abruzzo,Pescara,14.1975,42.45194,44.0
+Abruzzo,Pescara,14.23472,42.45639,44.0
+Abruzzo,Pescara,13.82166667,42.16333333,53.0
+Molise,Campobasso,14.674722,41.554167,74.0
+Molise,Campobasso,14.672778,41.566944,40.0
+Molise,Campobasso,14.525556,41.418889,80.0
+Molise,Campobasso,14.993333,41.998056,65.0
+Molise,Isernia,14.208889,41.759444,72.0
+Molise,Isernia,14.033333,41.478889,55.0
+Campania,Caserta,14.36,41.07,74.0
+Campania,Caserta,14.34472,41.08444,69.0
+Campania,Caserta,14.37809,41.04592,78.0
+Campania,Benevento,14.78938,41.13146,47.0
+Campania,Napoli,14.22806,40.84444,33.0
+Campania,Napoli,14.25133,40.85419,31.0
+Campania,Napoli,14.27167,40.85361,37.0
+Campania,Napoli,14.25417,40.84972,40.0
+Campania,Napoli,14.34108,40.86427,44.0
+Campania,Napoli,14.27547,40.87234,45.0
+Campania,Napoli,14.23111,40.84936,66.0
+Campania,Napoli,14.25451,40.86369,51.0
+Campania,Avellino,14.78222,40.92333,33.0
+Campania,Salerno,14.77751,40.69536,48.0
+Campania,Salerno,14.76972,40.68389,45.0
+Puglia,Foggia,15.90944,41.62833,74.0
+Puglia,Foggia,15.945,41.66528,79.0
+Puglia,Bari,16.56028,40.82778,59.0
+Puglia,Bari,16.888056,41.113611,54.0
+Puglia,Bari,16.859722,41.100556,45.0
+Puglia,Bari,16.90055556,41.11416667,65.0
+Puglia,Bari,16.77805556,41.09027778,55.0
+Puglia,Bari,16.56194444,41.20444444,66.0
+Puglia,Bari,17.29028,40.95667,61.0
+Puglia,Taranto,17.42389,40.53778,73.0
+Puglia,Taranto,17.63277778,40.3925,62.0
+Puglia,Taranto,17.33194,40.70083,61.0
+Puglia,Taranto,17.11583,40.59194,56.0
+Puglia,Taranto,17.28389,40.41194,71.0
+Puglia,Brindisi,17.94777,40.63416667,66.0
+Puglia,Brindisi,17.5875,40.5275,64.0
+Puglia,Brindisi,18.05361,40.48806,65.0
+Puglia,Lecce,18.02972,40.40444,65.0
+Puglia,Lecce,18.07638889,40.22638889,64.0
+Puglia,Lecce,18.17361,40.16805,68.0
+Puglia,Lecce,18.11611,40.45889,75.0
+Puglia,Lecce,18.19444444,40.36111111,60.0
+Puglia,Lecce,18.17277778,40.35805556,73.0
+Puglia,Lecce,18.30416667,40.1325,66.0
+Puglia,Lecce,18.305,40.33611111,68.0
+Puglia,Barletta-Andria-Trani,16.29167,41.23167,65.0
+Puglia,Barletta-Andria-Trani,16.28611,41.31667,67.0
+Basilicata,Potenza,15.787626,41.046003,67.0
+Basilicata,Potenza,15.639965,40.9841,76.0
+Basilicata,Potenza,15.722746,41.067055,73.0
+Basilicata,Potenza,15.811729,40.62541,63.0
+Basilicata,Potenza,15.872893,40.643893,76.0
+Basilicata,Potenza,15.90458,40.314068,69.0
+Basilicata,Matera,16.496209,40.485846,66.0
+Basilicata,Matera,16.547146,40.686653,71.0
+Basilicata,Matera,16.548431,40.420377,59.0
+Calabria,Cosenza,16.24517,39.3134,59.0
+Calabria,Cosenza,16.19397,39.71376,65.0
+Calabria,Cosenza,16.20373,39.74245,74.0
+Calabria,Reggio di Calabria,16.25518,38.22976,71.0
+Calabria,Reggio di Calabria,16.07022,38.39986,69.0
+Calabria,Crotone,17.11417,39.06808,60.0
+Sicilia,Trapani,12.546894,38.012365,70.0
+Sicilia,Palermo,13.302198,38.120539,97.0
+Sicilia,Palermo,13.354215,38.124382,34.0
+Sicilia,Palermo,13.11859,38.050162,69.0
+Sicilia,Palermo,13.687987,37.977911,65.0
+Sicilia,Messina,15.552935,38.198256,48.0
+Sicilia,Messina,15.249112,38.190608,71.0
+Sicilia,Agrigento,13.58278,37.32028,50.0
+Sicilia,Agrigento,13.5825,37.6225,84.0
+Sicilia,Agrigento,13.84472,37.35361,52.0
+Sicilia,Caltanissetta,14.253618,37.070349,48.0
+Sicilia,Caltanissetta,14.22778,37.07278,49.0
+Sicilia,Enna,14.281463,37.564125,98.0
+Sicilia,Catania,15.08694,37.52583,19.0
+Sicilia,Catania,15.04667,37.48417,63.0
+Sicilia,Catania,15.010788,37.515714,51.0
+Sicilia,Ragusa,14.56193,36.78583,91.0
+Sicilia,Ragusa,14.734022,36.917119,77.0
+Sicilia,Ragusa,14.714509,36.926331,61.0
+Sicilia,Siracusa,15.128831,37.182374,91.0
+Sicilia,Siracusa,15.27167,37.08,64.0
+Sicilia,Siracusa,15.262506,37.098447,45.0
+Sicilia,Siracusa,15.15157,37.12257,63.0
+Sicilia,Siracusa,15.190867,37.156119,60.0
+Sardegna,Sassari,9.501667,40.928333,30.0
+Sardegna,Sassari,9.491667,40.9275,58.0
+Sardegna,Sassari,8.360278,40.815,58.0
+Sardegna,Sassari,8.55139,40.71028,54.0
+Sardegna,Sassari,8.569167,40.716667,55.0
+Sardegna,Nuoro,8.773056,40.256389,75.0
+Sardegna,Nuoro,9.32889,40.31889,70.0
+Sardegna,Nuoro,9.0325,40.23722,66.0
+Sardegna,Cagliari,9.003055556,39.23722222,60.0
+Sardegna,Cagliari,8.995833,39.226944,61.0
+Sardegna,Cagliari,9.011389,39.286389,47.0
+Sardegna,Cagliari,9.126111111,39.21722222,39.0
+Sardegna,Cagliari,9.098055556,39.23444444,36.0
+Sardegna,Cagliari,9.103333333,39.23055556,51.0
+Sardegna,Cagliari,9.121666667,39.23277778,33.0
+Sardegna,Cagliari,9.139166667,39.20555556,48.0
+Sardegna,Cagliari,9.131111111,39.24833333,41.0
+Sardegna,Cagliari,9.105833333,39.21555556,43.0
+Sardegna,Cagliari,9.115,39.235833,25.0
+Sardegna,Cagliari,9.188056,39.232778,65.0
+Sardegna,Cagliari,9.016667,39.07,69.0
+Sardegna,Cagliari,9.012222,39.081667,76.0
+Sardegna,Cagliari,9.02,39.07,58.0
+Sardegna,Cagliari,9.136389,39.260556,48.0
+Sardegna,Oristano,8.59472,39.90917,49.0
+Sardegna,Sud Sardegna,8.521389,39.165556,58.0
+Sardegna,Sud Sardegna,8.541389,39.311111,59.0
+Sardegna,Sud Sardegna,8.386111,39.203333,67.0
+Sardegna,Sud Sardegna,8.784166667,39.54138889,55.0
+Sardegna,Sud Sardegna,8.79417,39.54667,43.0
