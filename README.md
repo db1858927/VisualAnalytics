@@ -1,4 +1,19 @@
 # VisualAnalytics Tool for Air Quality Index
+Project for Visual Analytics course (2023/24) at Sapienza University of Rome.
+
+## Overview
+Air Quality Index Visual-Analytics
+tool analyze concentration of pollutants in Italy
+in order to improve public awareness and assess
+the impact of environmental policies. The tool of-
+fers an interactive map, time-series, scatter-plot
+and box-plot to identify patterns. Users can inter-
+act with the tool to explore insights such as region
+with higher concentration of some pollutant, or to
+capture an overview of the last 10 years about the
+situation of Italy.
+
+![Tool](va-project/public/Tool.png)
 
 ## Prerequisites
 
