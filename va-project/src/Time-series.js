@@ -172,13 +172,13 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                             d => d.date.getFullYear(),
                         );
 
+
                        
                         const scatterData = Array.from(dataByRegion, ([year, value]) => ({ year, value }));
+                        scatterData.sort((a, b) => a.year - b.year);
 
                         
                         if (scatterData.length > 0) {
-                            
-                            scatterData.sort((a, b) => a.value - b.value);
 
                            
                             x.domain(scatterData.map(d => String(d.year)));
@@ -218,7 +218,23 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                                 .attr("cx", d => x(String(d.year)) + x.bandwidth() / 2) // Adjust x position for band scale
                                 .attr("cy", d => y(d.value))
                                 .attr("r", 5)
-                                .attr("fill", d => colorScale(d.value));
+                                .attr("fill", d => colorScale(d.value))
+                                .on("mouseover", function(event, d) {
+                                    d3.select(this).transition().attr("r", 9)
+                                    ;
+        
+                                })
+                                .on("mouseout", function(event, d) {
+                                    d3.select(this).transition().attr("r", 5);
+                                })
+                                .on("click", function(event, d) {
+                                    console.log("Clicked data:", d); 
+                                    if (d && d.year) {
+                                      setYears(String(d.year));
+                                    } else {
+                                      console.error("d.year is undefined or null");
+                                    }
+                                });
                             
 
                         }

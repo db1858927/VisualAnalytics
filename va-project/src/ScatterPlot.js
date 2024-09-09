@@ -33,7 +33,7 @@ const ScatterPlot = ({ year }) => {
       const clusters = Array.from(new Set(data.map(d => d.labels))).sort();
       const colorScale = d3.scaleOrdinal()
         .domain(clusters)
-        .range([ "#F8766D", "#00BA38", "#619CFF"])
+        .range([ "#9b59b6", "#ffe135", "#1abc9c"])
 
       
       const xExtent = d3.extent(data, d => d['Component 1']);
@@ -73,7 +73,7 @@ const ScatterPlot = ({ year }) => {
 
       svg.append("text")
         .attr("text-anchor", "end")
-        .attr("y", height + 35)
+        .attr("y", height + 32)
         .attr("x", width / 2 + 60)
         .text(`TSNE-Component 1`)
         .attr("fill", "white")
