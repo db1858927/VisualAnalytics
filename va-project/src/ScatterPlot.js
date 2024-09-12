@@ -1,129 +1,165 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
-const ScatterPlot = ({ year }) => {
+const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect, selectedProvinces }) => {
   const svgRef = useRef();
   const legendRef = useRef();
-
+  const tooltipRef = useRef(); // Ref per il tooltip
+  const [data, setData] = useState([]); // Dati caricati solo una volta
+  // const [selectedProvinces, setSelectedProvinces] = useState([]); // Stato per memorizzare le province selezionate
 
   useEffect(() => {
+    // Carica i dati solo al cambio dell'anno
+    d3.csv(`./tsne-results/Province/tsne_results_${year}.csv`).then(loadedData => {
+      loadedData.forEach(d => {
+        d['Component 1'] = +d['Component 1'];
+        d['Component 2'] = +d['Component 2'];
+      });
+      setData(loadedData); // Salva i dati e disegna il grafico
+      drawInitialPlot(loadedData); // Disegna il grafico iniziale
+    }).catch(error => {
+      console.error("Error loading the data:", error);
+    });
+  }, [year]);
+
+  // Effetto per aggiornare i cerchi selezionati
+  useEffect(() => {
+    // Aggiorna i cerchi selezionati quando `selectedProvinces` cambia
+    updateSelectedCircles(selectedProvinces);
+  }, [data,selectedProvinces]);
+
+  const clusters = Array.from(new Set(data.map(d => d.labels))).sort();
+  const colorScale = d3.scaleOrdinal()
+    .domain(clusters)
+    .range([ "#9b59b6", "#ffe135", "#1abc9c"])
+
+
+  // Funzione per disegnare il grafico solo una volta al caricamento
+  const drawInitialPlot = (data) => {
     const margin = { top: 10, right: 30, bottom: 40, left: 50 };
     const width = 400 - margin.left - margin.right;
     const height = 320 - margin.top - margin.bottom;
 
     const svgElement = d3.select(svgRef.current);
-
     svgElement.selectAll('*').remove();
 
     const svg = svgElement
       .append('svg')
       .attr('width', width + margin.left + margin.right + 100)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', `translate(${margin.left}, ${margin.top})`);
+      .attr('height', height + margin.top + margin.bottom);
 
-    d3.csv(`./tsne-results/Regions/tsne_results_${year}.csv`).then(data => {
-     
-      data.forEach(d => {
-        d['Component 1'] = +d['Component 1'];
-        d['Component 2'] = +d['Component 2'];
+    svg.append("defs").append("clipPath")
+      .attr("id", "clip")
+      .append("rect")
+      .attr("width", width)
+      .attr("height", height);
+    
+    const plotArea = svg.append('g')
+      .attr('transform',` translate(${margin.left}, ${margin.top})`)
+      .attr("clip-path", "url(#clip)");
+
+    const xExtent = d3.extent(data, d => d['Component 1']);
+    const yExtent = d3.extent(data, d => d['Component 2']);
+    const xMargin = (xExtent[1] - xExtent[0]) * 0.05;
+    const yMargin = (yExtent[1] - yExtent[0]) * 0.05;
+
+    const x = d3.scaleLinear()
+      .domain([xExtent[0] - xMargin, xExtent[1] + xMargin])
+      .range([0, width]);
+
+    const y = d3.scaleLinear()
+      .domain([yExtent[0] - yMargin, yExtent[1] + yMargin])
+      .range([height, 0]);
+
+    const xAxis = svg.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top + height})`)
+      .call(d3.axisBottom(x));
+
+    const yAxis = svg.append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`)
+      .call(d3.axisLeft(y));
+
+    const colorScale = d3.scaleOrdinal()
+      .domain([...new Set(data.map(d => d.labels))])
+      .range(["#9b59b6", "#ffe135", "#1abc9c"]);
+
+    const circles = plotArea.selectAll("circle")
+      .data(data)
+      .enter().append("circle")
+      .attr("cx", d => x(d['Component 1']))
+      .attr("cy", d => y(d['Component 2']))
+      .attr("r", 5)
+      .style("fill", d => colorScale(d['labels']))
+      .style("opacity", d => selectedProvinces.includes(d['Provincia']) ? 1 : 0.8)
+      .style("stroke", d => selectedProvinces.includes(d['Provincia']) ? "lightgray" : "none")
+      .style("stroke-width", d => selectedProvinces.includes(d['Provincia']) ? "2px" : "0px")
+      .on("mouseover", function (event, d) {
+        d3.select(this).transition().attr("r", 7);
+        labels.filter(label => label['Provincia'] === d['Provincia']).transition().style("opacity", 0.8);
+        onProvinceHover(d['Provincia']);
+      })
+      .on("mouseout", function (event, d) {
+        if (!selectedProvinces.includes(d['Provincia'])) {
+          d3.select(this).transition().attr("r", 5);
+          labels.filter(label => label['Provincia'] === d['Provincia']).transition().style("opacity", 0);
+        }
+        onProvinceLeave();
+      })
+      .on("click", function (event, d) {
+        // Aggiorna lo stato selectedProvinces
+        onProvincesSelect((prevSelectedProvinces) => {
+          const isSelected = prevSelectedProvinces.includes(d['Provincia']);
+          let newSelection;
+      
+          if (isSelected) {
+            // Rimuovi la provincia se è già selezionata
+            newSelection = prevSelectedProvinces.filter(p => p !== d['Provincia']);
+          } else {
+            // Aggiungi la provincia se non è selezionata
+            newSelection = [...prevSelectedProvinces, d['Provincia']];
+          }
+      
+          // Aggiorna la selezione esternamente
+          onProvincesSelect(newSelection);
+      
+          // Aggiorna il tooltip immediatamente con la nuova selezione
+          d3.select(tooltipRef.current).html(`Selected provinces: ${newSelection.join(", ")}`);
+          
+          // Restituisci il nuovo stato
+          return newSelection;
+        });
+      });
+    const labels = svg.selectAll("text.label")
+      .data(data)
+      .enter().append("text")
+      .attr("x", d => x(d['Component 1']) + 8)
+      .attr("y", d => y(d['Component 2']) + 2)
+      .text(d => d['Provincia'])
+      .style("font-size", "12px")
+      .style("fill", "white")
+      .style("pointer-events", "none")
+      .style("opacity", 0)
+      .attr("class", "label");
+
+    const zoom = d3.zoom()
+      .scaleExtent([0.5, 10])
+      .extent([[0, 0], [width, height]])
+      .on('zoom', (event) => {
+        const transform = event.transform;
+        const newX = transform.rescaleX(x);
+        const newY = transform.rescaleY(y);
+
+        xAxis.call(d3.axisBottom(newX));
+        yAxis.call(d3.axisLeft(newY));
+
+        circles
+          .attr('cx', d => newX(d['Component 1']))
+          .attr('cy', d => newY(d['Component 2']));
       });
 
-    
-      const clusters = Array.from(new Set(data.map(d => d.labels))).sort();
-      const colorScale = d3.scaleOrdinal()
-        .domain(clusters)
-        .range([ "#9b59b6", "#ffe135", "#1abc9c"])
+    svgElement.call(zoom);
 
-      
-      const xExtent = d3.extent(data, d => d['Component 1']);
-      const yExtent = d3.extent(data, d => d['Component 2']);
-      const xMargin = (xExtent[1] - xExtent[0]) * 0.05;
-      const yMargin = (yExtent[1] - yExtent[0]) * 0.05;
-
-      
-      const x = d3.scaleLinear()
-        .domain([xExtent[0] - xMargin, xExtent[1] + xMargin])
-        .range([0, width]);
-
-      const y = d3.scaleLinear()
-        .domain([yExtent[0] - yMargin, yExtent[1] + yMargin])
-        .range([height, 0]);
-
-      
-      const xAxis = d3.axisBottom(x);
-      const yAxis = d3.axisLeft(y);
-
-      
-      svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
-
-      svg.append("g")
-        .call(yAxis);
-
-      svg.append("text")
-        .attr("text-anchor", "end")
-        .attr("transform", "rotate(-90)")
-        .attr("y", -32)
-        .attr("x", -height / 2 + 60)
-        .text(`TSNE-Component 2`)
-        .attr("fill", "white")
-        .style("font-size", "10px");
-
-      svg.append("text")
-        .attr("text-anchor", "end")
-        .attr("y", height + 32)
-        .attr("x", width / 2 + 60)
-        .text(`TSNE-Component 1`)
-        .attr("fill", "white")
-        .style("font-size", "10px");
-
-      const labels = svg.selectAll("text.label")
-        .data(data)
-        .enter().append("text")
-        .attr("x", d => x(d['Component 1']) + 8)  
-        .attr("y", d => y(d['Component 2']) + 2)
-        .text(d => d['Regione'])
-        .style("font-size", "12px")
-        .style("fill", "white")
-        .style("opacity", 0)  
-        .attr("class", "label");
-
-
-
-      svg.selectAll("circle")
-        .data(data)
-        .enter().append("circle")
-        .attr("cx", d => x(d['Component 1']))
-        .attr("cy", d => y(d['Component 2']))
-        .attr("r", 5)
-        .style("fill", d => colorScale(d['labels']))
-        .style("opacity", 0.8)
-        .on("mouseover", function (event, d) {
-          d3.select(this).transition().attr("r", 7);  
-          const label = labels.filter(label => label['Regione'] === d['Regione']);
-
-          label.transition().style("opacity", 0.8);
-          console.log(d['labels'])
-
-
-        })
-        .on("mouseout", function (event, d) {
-          d3.select(this).transition().attr("r", 5);  
-          labels.filter(label => label['Regione'] === d['Regione'])
-            .transition()
-            .style("opacity", 0);
-
-
-        });
-
-
-
-
-
-
-      const legendSvg = d3.select(legendRef.current);
+    const legendSvg = d3.select(legendRef.current);
 
      
       legendSvg.selectAll("*").remove();
@@ -224,16 +260,43 @@ const ScatterPlot = ({ year }) => {
         .text('Clusters')
         .attr("fill", "white")
         .style("font-size", "12px");
-    }).catch(error => {
-      console.error("Error loading the data:", error);
-    });
-  }, [year]);
+    
+  };
+
+  
+
+  // Funzione per aggiornare solo i cerchi selezionati
+  const updateSelectedCircles = (newSelection) => {
+    d3.select(svgRef.current)
+      .selectAll("circle")
+      .style("stroke", d => newSelection.includes(d['Provincia']) ? "#d3d3d3" : "none")
+      .style("stroke-width", d => newSelection.includes(d['Provincia']) ? "2px" : "0px")
+      .style("opacity", d => newSelection.includes(d['Provincia']) ? 1 : 0.8)
+      .transition().attr("r", d => newSelection.includes(d['Provincia']) ? 7 : 5);
+  };
 
   return (
-    <div>
-      <svg ref={svgRef} style={{ display: 'flex', top: 0, left: 0, height: '350px', width: '400px', overflow: 'visible' }}></svg>
-
+    <div style={{ display: 'flex' }}>
+      <svg ref={svgRef} style={{ height: '350px', width: '400px', overflow: 'visible' }}></svg>
       <svg ref={legendRef} style={{ position: 'absolute', bottom: '20px' }}></svg>
+      {selectedProvinces.length > 0 && (
+        <div
+          ref={tooltipRef}
+          style={{
+            padding: '10px',
+            marginLeft: '10px',
+            textSize: '10px',
+            borderRadius: '5px',
+            maxHeight: '200px',
+            overflowY: 'auto',
+            whiteSpace: 'pre-wrap',
+            width: '150px',
+            marginTop: '120px'
+          }}
+        >
+          Selected provinces: {selectedProvinces.join(", ")}
+        </div>
+      )}
     </div>
   );
 };

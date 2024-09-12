@@ -32,7 +32,9 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
         
         const tooltip = d3.select(tooltipRef.current);
 
-        const data = (selectedRegion ) ? allData.filter(d => getRegionName(d.Regione) === (selectedRegion )) : allData;
+        const data = (selectedRegion) 
+        ? allData.filter(d => getRegionName(d.Regione) === selectedRegion && d.Provincia && d.media_yy)
+        : allData.filter(d => d.Regione && d.media_yy);
 
 
         const margin = { top: 10, right: 40, bottom: 60, left: 50 };
@@ -50,7 +52,10 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
 
         groups.forEach(group => {
             const region = group
+            
             const values = data.filter(d => ((selectedRegion ) ? d.Provincia : d.Regione) === group).map(d => +d.media_yy);
+
+            if (values.length > 0) {
             values.sort(d3.ascending);
             const q1 = d3.quantile(values, 0.25);
             const median = d3.quantile(values, 0.5);
@@ -61,6 +66,8 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
             const mean = d3.mean(values) ? d3.mean(values).toFixed(2) : '0';
             const outliers = values.length > 1 ? values.filter(v => v < min || v > max) : [];
             groupData.set(group, { q1, median, q3, interQuantileRange, min, max, mean, values, outliers, region });
+            }
+
         });
 
         const allValues = data.map(d => +d.media_yy);
@@ -273,7 +280,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
 
         const createLegend = () => {
             const legendWidth = 100;
-            const legendHeight = 120;
+            const legendHeight = 140;
 
             const legendSvg = d3.select(legendRef.current)
                 .attr("width", legendWidth)
@@ -291,7 +298,8 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
             const legendData = [
                 { label: `Limit`, symbol: "line", strokeDasharray: "5,5", color: "red", fontSize: "9px"},
                 { label: "Mean", symbol: "+", color: "white" },
-                { label: "Outliers", symbol: "circle", radius: 3, color: "white", fill: "none" }
+                { label: "Outliers", symbol: "circle", radius: 3, color: "white", fill: "none" },
+                { label: "Median", symbol: "-", color: "white" },
             ];
 
             
@@ -325,7 +333,14 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                         .attr("r", d.radius)
                         .style("fill", d.fill)
                         .style("stroke", d.color);
-                }
+                } else if (d.symbol === "-") {
+                    d3.select(this).append("line")
+                    .attr("x1", 0)
+                    .attr("y1", size / 2 + 2.5)
+                    .attr("x2", size)
+                    .attr("y2", size / 2 + 2.5)
+                    .attr("stroke", d.color)}
+
             });
 
            

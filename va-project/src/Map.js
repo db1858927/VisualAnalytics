@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
-const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
+const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvince, selectedProvinces }) => {
   const svgRef = useRef();
   const initialFeaturesRef = useRef(null);
   const legendRef = useRef();
@@ -9,6 +9,30 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
   const provinciaDataRef = useRef();
   const [hasClickedRegion, setHasClickedRegion] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false); // Stato per verificare se i dati sono caricati
+
+  const updateBorders = () => {
+    const svg = d3.select(svgRef.current);
+    svg.selectAll("path.province-border")
+      .style("stroke-width", d => {
+        if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
+          return "2px";
+        }
+        if (selectedProvince && selectedProvince.includes(d.properties.prov_name)) {
+          return "2px";
+        }
+        return "0.2px"; // Default stroke width
+      })
+      .style("opacity", d => {
+        if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
+          return 1;
+        }
+        if (selectedProvince && selectedProvince.includes(d.properties.prov_name)) {
+          return 1;
+        }
+        return 0.7; // Default opacity
+      });
+  };
+  
 
   useEffect(() => {
 
@@ -50,10 +74,10 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
           .unknown("white");
 
       } else {
-        
+
         return d3.scaleOrdinal()
           .domain(['Good', 'Fair', 'Moderate', 'Poor', 'Very poor', 'Extremely poor'])
-          .range(d3.schemeReds[6]) 
+          .range(d3.schemeReds[6])
           .unknown("white");
       }
     };
@@ -70,6 +94,8 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
         throw error;
       }
     };
+
+    
 
     const loadCSV = async () => {
       try {
@@ -100,7 +126,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             if (value <= 800) return 'Extremely poor';
             return 'undefined'
           } else if (pollutant === 'PM10') {
-            
+
             if (value <= 20) return 'Good';
             if (value <= 40) return 'Fair';
             if (value <= 50) return 'Moderate';
@@ -109,7 +135,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             if (value <= 800) return 'Extremely poor';
             return 'undefined'
           } else if (pollutant === 'PM25') {
-            
+
             if (value <= 10) return 'Good';
             if (value <= 20) return 'Fair';
             if (value <= 25) return 'Moderate';
@@ -118,7 +144,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             if (value <= 800) return 'Extremely poor';
             return 'undefined'
           } else if (pollutant === 'O3') {
-            
+
             if (value <= 50) return 'Good';
             if (value <= 100) return 'Fair';
             if (value <= 130) return 'Moderate';
@@ -145,7 +171,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             const media_yy_no2 = +d.no2;
             const media_yy_o3 = +d.o3;
 
-            
+
             if (!regionData[region]) {
               regionData[region] = {
                 PM10: [],
@@ -240,7 +266,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             const meanNO2 = d3.mean(regionData[region].NO2);
             const meanO3 = d3.mean(regionData[region].O3);
 
-            
+
             const worstCategory = [
               { category: meanPM10 !== null ? categorizeValue(meanPM10, 'PM10') : null, pollutant: 'PM10' },
               { category: meanPM2_5 !== null ? categorizeValue(meanPM2_5, 'PM25') : null, pollutant: 'PM25' },
@@ -249,20 +275,20 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             ].reduce((prev, current) => {
               const order = ['Good', 'Fair', 'Moderate', 'Poor', 'Very poor', 'Extremely poor'];
 
-              
+
               if (current.category === null) {
                 return prev;
               }
 
-              
+
               if (prev.category === null) {
                 return current;
               }
 
-              
+
               return order.indexOf(current.category) > order.indexOf(prev.category) ? current : prev;
             });
-            
+
             regionMeans[region] = {
               category: worstCategory.category,
               pollutant: worstCategory.pollutant
@@ -279,7 +305,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
             const meanNO2 = d3.mean(provinciaData[provincia].NO2.filter(d => d !== null));
             const meanO3 = d3.mean(provinciaData[provincia].O3.filter(d => d !== null));
 
-            
+
             const worstCategory = [
               { category: categorizeValue(meanPM10, 'PM10'), pollutant: 'PM10' },
               { category: categorizeValue(meanPM2_5, 'PM25'), pollutant: 'PM25' },
@@ -290,7 +316,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
               return order.indexOf(current.category) > order.indexOf(prev.category) ? current : prev;
 
             });
-            
+
             provinciaMeans[provincia] = {
               category: worstCategory.category,
               pollutant: worstCategory.pollutant
@@ -304,11 +330,11 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
 
         initialFeaturesRef.current = topo.features;
 
-        setDataLoaded(true); 
+        setDataLoaded(true);
 
         createLegend(colorScale);
 
-       
+
         if (selectedRegion) {
           updateProvinciaMap(selectedRegion);
         } else if (!hasClickedRegion) {
@@ -326,8 +352,9 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
       d3.select(this)
         .transition()
         .duration(200)
+        .style("stroke", "black")
+        .style("stroke-width", "0.8px")
         .style("opacity", 1)
-        .style("stroke", "black");
 
       tooltip.transition()
         .duration(200)
@@ -363,8 +390,10 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
       d3.select(this)
         .transition()
         .duration(200)
-        .style("opacity", .8)
-        .style("stroke", "none");
+        .style("stroke", "black")
+        .style("stroke-width", "0.8px")  // Bordo più marcato per le regioni
+        .style("opacity", .7)
+
 
       tooltip.transition()
         .duration(500)
@@ -384,7 +413,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
         .duration(200)
         .style("left", `${containerRect.left - 10}px`)
         .style("top", `${containerRect.top - 400}px`)
-        .style("opacity", .9)
+        .style("opacity", .7)
         .style("font-size", "12px")
         .style("text-align", "right");
       if (pollutant === '_total') {
@@ -409,7 +438,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
       d3.select(this)
         .transition()
         .duration(200)
-        .style("opacity", .8)
+        .style("opacity", .7)
         .style("stroke", "none");
 
       tooltip.transition()
@@ -424,44 +453,87 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
           .attr("transform", event.transform);
       });
 
-    const updateMap = (features, isProvincia = true, reset = false) => {
 
+      
+
+    const updateMap = (features, isProvincia = true, reset = false) => {
+      // Rimuovi tutti i path esistenti
       svg.selectAll("path").remove();
+
       if (!isProvincia) {
         if (!Array.isArray(features)) {
           console.error('Features is not an array:', features);
-         
           features = [];
           return;
         }
       }
 
-      svg.selectAll("path")
-        .data(features)
-        .enter().append("path")
-        .attr("class", isProvincia ? "provincia" : "regione")
-        .attr("d", path.projection(projection))
-        .style("fill", d => {
-
-          if (pollutant === '_total') {
-            const meanValue = isProvincia ? provinciaMeans[d.properties.prov_name] : regionMeans[d.properties.name];
-
-            return meanValue !== undefined ? colorScale(meanValue.category) : "white";
-          }
-          else {
-            const meanValue = isProvincia ? provinciaMeans[d.properties.prov_name] : regionMeans[d.properties.name];
-            return meanValue !== undefined ? colorScale(meanValue) : "white";
-          }
-
-        })
-        .style("stroke", "none")
-        .style("opacity", .8)
-        .on("mouseover", isProvincia ? mouseOverprovincia : mouseOverRegion)
-        .on("mouseleave", isProvincia ? mouseLeaveprovincia : mouseLeaveRegion)
-        .on("click", isProvincia ? null : clickRegion);
 
       if (isProvincia) {
-        setHasClickedRegion(true)
+        // Disegna le province sopra le regioni con bordi più sottili o nessun bordo
+        svg.selectAll("path.provincia")
+          .data(features)
+          .enter().append("path")
+          .attr("class", "provincia")
+          .attr("d", path.projection(projection))
+          .style("fill", d => {
+            if (pollutant === '_total') {
+              const meanValue = provinciaMeans[d.properties.prov_name];
+              return meanValue !== undefined ? colorScale(meanValue.category) : "white";
+            } else {
+              const meanValue = provinciaMeans[d.properties.prov_name];
+              return meanValue !== undefined ? colorScale(meanValue) : "white";
+            }
+          })
+          .style("opacity", .7)
+          .on("mouseover", isProvincia ? mouseOverprovincia : mouseOverRegion)
+          .on("mouseleave", isProvincia ? mouseLeaveprovincia : mouseLeaveRegion)
+          .on("click", isProvincia ? null : clickRegion);
+
+          
+      }
+      else {
+
+
+        // Disegna le regioni con bordi marcati
+        svg.selectAll("path.regione")
+          .data(features)
+          .enter().append("path")
+          .attr("class", "regione")
+          .attr("d", path.projection(projection))
+          .style("fill", d => {
+            if (pollutant === '_total') {
+              const meanValue = isProvincia ? provinciaMeans[d.properties.prov_name] : regionMeans[d.properties.name];
+              return meanValue !== undefined ? colorScale(meanValue.category) : "white";
+            } else {
+              const meanValue = isProvincia ? provinciaMeans[d.properties.prov_name] : regionMeans[d.properties.name];
+              return meanValue !== undefined ? colorScale(meanValue) : "white";
+            }
+          })
+          .style("stroke", "black")
+          .style("stroke-width", "0.8px")  // Bordo più marcato per le regioni
+          .style("opacity", .7)
+          .on("mouseover", isProvincia ? mouseOverprovincia : mouseOverRegion)
+          .on("mouseleave", isProvincia ? mouseLeaveprovincia : mouseLeaveRegion)
+          .on("click", isProvincia ? null : clickRegion);
+
+          updateBorders();
+
+          svg.selectAll("path.province-border")
+          .data(provinciaDataRef.current.features)
+          .enter().append("path")
+          .attr("class", "province-border")
+          .attr("d", path.projection(projection))
+          .style("fill", "none")
+          .style("stroke", "black")
+          .style("stroke-width", "0.1px") 
+        
+
+
+      }
+
+      if (isProvincia) {
+        setHasClickedRegion(true);
       }
 
       if (!reset && isProvincia) {
@@ -480,7 +552,6 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
         );
       }
     };
-
     const calculateTotalBounds = (features) => {
       let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
@@ -515,8 +586,10 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
         zoom.transform,
         d3.zoomIdentity
       );
-      updateMap(initialFeaturesRef.current, false, true);
+      updateMap(initialFeaturesRef.current, false, true, true);
     };
+
+
 
     const tooltip = d3.select(tooltipRef.current);
 
@@ -555,7 +628,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
 
       const legendSvg = d3.select(legendRef.current);
 
-      
+
       legendSvg.selectAll("*").remove();
 
       legendSvg
@@ -623,17 +696,26 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year }) => {
         prov.properties.mean_value = provinciaMeans[prov.properties.prov_name];
       });
 
-      updateMap(provinciaInRegion, true);
+      updateMap(provinciaInRegion, true, false, false);
     };
 
     if (selectedRegion && dataLoaded) {
-      updateProvinciaMap(selectedRegion);
+      updateProvinciaMap(selectedRegion, true, false, true);
     } else {
       resetZoom();
     }
 
+
+
+
     loadData();
   }, [selectedRegion, hasClickedRegion, pollutant, year]);
+
+  useEffect(() => {
+    if (dataLoaded) {
+      updateBorders();  // Aggiorna solo i bordi delle province quando selectedProvinces o selectedProvince cambiano
+    }
+  }, [selectedProvinces, selectedProvince, dataLoaded]);
 
   return (
     <div style={{ width: '100%', height: '46vh', overflow: 'hidden', position: 'relative', top: 0, left: 0 }}>
