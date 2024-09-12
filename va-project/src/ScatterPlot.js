@@ -1,12 +1,122 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
-const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect, selectedProvinces }) => {
+const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect, selectedProvinces, hoveredRegion }) => {
   const svgRef = useRef();
   const legendRef = useRef();
   const tooltipRef = useRef(); // Ref per il tooltip
   const [data, setData] = useState([]); // Dati caricati solo una volta
   // const [selectedProvinces, setSelectedProvinces] = useState([]); // Stato per memorizzare le province selezionate
+
+  const provinceToRegionMap = {
+    'Agrigento': 'Sicilia',
+    'Alessandria': 'Piemonte',
+    'Ancona': 'Marche',
+    'Aosta': 'Valle d\'Aosta',
+    'Arezzo': 'Toscana',
+    'Ascoli Piceno': 'Marche',
+    'Asti': 'Piemonte',
+    'Avellino': 'Campania',
+    'Bari': 'Puglia',
+    'Barletta-Andria-Trani': 'Puglia',
+    'Belluno': 'Veneto',
+    'Benevento': 'Campania',
+    'Bergamo': 'Lombardia',
+    'Biella': 'Piemonte',
+    'Bologna': 'Emilia-Romagna',
+    'Bolzano': 'Trentino-Alto Adige',
+    'Brescia': 'Lombardia',
+    'Brindisi': 'Puglia',
+    'Cagliari': 'Sardegna',
+    'Caltanissetta': 'Sicilia',
+    'Campobasso': 'Molise',
+    'Caserta': 'Campania',
+    'Catania': 'Sicilia',
+    'Catanzaro': 'Calabria',
+    'Chieti': 'Abruzzo',
+    'Como': 'Lombardia',
+    'Cosenza': 'Calabria',
+    'Cremona': 'Lombardia',
+    'Crotone': 'Calabria',
+    'Cuneo': 'Piemonte',
+    'Enna': 'Sicilia',
+    'Fermo': 'Marche',
+    'Ferrara': 'Emilia-Romagna',
+    'Firenze': 'Toscana',
+    'Foggia': 'Puglia',
+    'Forlì-Cesena': 'Emilia-Romagna',
+    'Frosinone': 'Lazio',
+    'Genova': 'Liguria',
+    'Gorizia': 'Friuli Venezia Giulia',
+    'Grosseto': 'Toscana',
+    'Imperia': 'Liguria',
+    'Isernia': 'Molise',
+    'La Spezia': 'Liguria',
+    'L\'Aquila': 'Abruzzo',
+    'Latina': 'Lazio',
+    'Lecce': 'Puglia',
+    'Lecco': 'Lombardia',
+    'Livorno': 'Toscana',
+    'Lodi': 'Lombardia',
+    'Lucca': 'Toscana',
+    'Macerata': 'Marche',
+    'Mantova': 'Lombardia',
+    'Massa-Carrara': 'Toscana',
+    'Matera': 'Basilicata',
+    'Messina': 'Sicilia',
+    'Milano': 'Lombardia',
+    'Modena': 'Emilia-Romagna',
+    'Monza e Brianza': 'Lombardia',
+    'Napoli': 'Campania',
+    'Novara': 'Piemonte',
+    'Nuoro': 'Sardegna',
+    'Oristano': 'Sardegna',
+    'Padova': 'Veneto',
+    'Palermo': 'Sicilia',
+    'Parma': 'Emilia-Romagna',
+    'Pavia': 'Lombardia',
+    'Perugia': 'Umbria',
+    'Pesaro e Urbino': 'Marche',
+    'Pescara': 'Abruzzo',
+    'Piacenza': 'Emilia-Romagna',
+    'Pisa': 'Toscana',
+    'Pistoia': 'Toscana',
+    'Pordenone': 'Friuli Venezia Giulia',
+    'Potenza': 'Basilicata',
+    'Prato': 'Toscana',
+    'Ragusa': 'Sicilia',
+    'Ravenna': 'Emilia-Romagna',
+    'Reggio Calabria': 'Calabria',
+    'Reggio Emilia': 'Emilia-Romagna',
+    'Rieti': 'Lazio',
+    'Rimini': 'Emilia-Romagna',
+    'Roma': 'Lazio',
+    'Rovigo': 'Veneto',
+    'Salerno': 'Campania',
+    'Sassari': 'Sardegna',
+    'Savona': 'Liguria',
+    'Siena': 'Toscana',
+    'Siracusa': 'Sicilia',
+    'Sondrio': 'Lombardia',
+    'Sud Sardegna': 'Sardegna',
+    'Taranto': 'Puglia',
+    'Teramo': 'Abruzzo',
+    'Terni': 'Umbria',
+    'Torino': 'Piemonte',
+    'Trapani': 'Sicilia',
+    'Trento': 'Trentino-Alto Adige',
+    'Treviso': 'Veneto',
+    'Trieste': 'Friuli Venezia Giulia',
+    'Udine': 'Friuli Venezia Giulia',
+    'Varese': 'Lombardia',
+    'Venezia': 'Veneto',
+    'Verbano-Cusio-Ossola': 'Piemonte',
+    'Vercelli': 'Piemonte',
+    'Verona': 'Veneto',
+    'Vibo Valentia': 'Calabria',
+    'Vicenza': 'Veneto',
+    'Viterbo': 'Lazio'
+  };
 
   useEffect(() => {
     // Carica i dati solo al cambio dell'anno
@@ -263,6 +373,9 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
     
   };
 
+  // Evidenzia i punti delle province appartenenti alla regione selezionata
+ 
+
   
 
   // Funzione per aggiornare solo i cerchi selezionati
@@ -275,6 +388,22 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
       .transition().attr("r", d => newSelection.includes(d['Provincia']) ? 7 : 5);
   };
 
+  useEffect(() => {
+    const svg = d3.select(svgRef.current);
+  
+    console.log("Hovered region:", hoveredRegion);  // Verifica che hoveredRegion sia corretto
+    svg.selectAll("circle")
+      .transition()
+      .duration(200)
+      .attr("r", d => {
+        console.log("Provincia:", d.Provincia, "Regione:", provinceToRegionMap[d.Provincia]);  // Controlla il mapping
+        return provinceToRegionMap[d.Provincia] === hoveredRegion ? 7 : 5;
+      })
+      .style("opacity", d => provinceToRegionMap[d.Provincia] === hoveredRegion ? 1 : 0.5)
+      .style("stroke", d => provinceToRegionMap[d.Provincia] === hoveredRegion ? "#d3d3d3" : "none")
+      .style("stroke-width", d => provinceToRegionMap[d.Provincia] === hoveredRegion ? "2px" : "0px")
+  
+  }, [hoveredRegion]);
   return (
     <div style={{ display: 'flex' }}>
       <svg ref={svgRef} style={{ height: '350px', width: '400px', overflow: 'visible' }}></svg>

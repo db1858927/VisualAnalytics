@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
-const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvince, selectedProvinces }) => {
+const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvince, selectedProvinces, setHoveredRegion }) => {
   const svgRef = useRef();
   const initialFeaturesRef = useRef(null);
   const legendRef = useRef();
@@ -9,6 +9,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
   const provinciaDataRef = useRef();
   const [hasClickedRegion, setHasClickedRegion] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false); // Stato per verificare se i dati sono caricati
+  // 
 
   const updateBorders = () => {
     const svg = d3.select(svgRef.current);
@@ -363,6 +364,8 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
         .style("opacity", .9)
         .style("font-size", "12px")
         .style("text-align", "right");
+        
+        
 
       if (pollutant === '_total') {
 
@@ -375,6 +378,8 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
     <br> ${regionMeans[d.properties.name] && regionMeans[d.properties.name].category !== undefined ? regionMeans[d.properties.name] && 'due to:' + regionMeans[d.properties.name].pollutant : 'undefined'}
     <br>Year: ${year}`)
 
+    
+
       }
       else {
 
@@ -383,6 +388,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
 
 
       }
+      setHoveredRegion(d.properties.name); 
 
     };
 
@@ -398,6 +404,8 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
       tooltip.transition()
         .duration(500)
         .style("opacity", 0);
+
+        setHoveredRegion(null);
     };
 
     const mouseOverprovincia = function (event, d) {
@@ -424,13 +432,17 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
      ${provinciaMeans[d.properties.prov_name] && provinciaMeans[d.properties.prov_name] !== undefined ? '<br>' + provinciaMeans[d.properties.prov_name].category : ''}  ${provinciaMeans[d.properties.prov_name] && provinciaMeans[d.properties.prov_name] !== undefined ? 'due to:' + provinciaMeans[d.properties.prov_name].pollutant : ''}
     <br>Year: ${year}`)
 
+    
+
       }
       else {
 
         tooltip.html(`Provincia: <b>${d.properties.prov_name}</b><br>Mean: ${provinciaMeans[d.properties.prov_name]}<br>Year: ${year}`)
 
 
+
       }
+      
 
     };
 
@@ -444,6 +456,8 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
       tooltip.transition()
         .duration(500)
         .style("opacity", 0);
+
+        
     };
 
     const zoom = d3.zoom()

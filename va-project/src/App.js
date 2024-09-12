@@ -56,6 +56,7 @@ function App() {
   const [years, setYears] = useState('2010');
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedProvinces, setSelectedProvinces] = useState([]);
+  const [hoveredRegion, setHoveredRegion] = useState(null);
 
   const handleChangeYears = (event) => {
     setYears(event.target.value);
@@ -134,7 +135,18 @@ function App() {
                     MenuProps={MenuProps}
                   >
                     <MenuItem value={'2010'}>2010</MenuItem>
-                    {/* Add other years here */}
+                    <MenuItem value={'2011'}>2011</MenuItem>
+                    <MenuItem value={'2012'}>2012</MenuItem>
+                    <MenuItem value={'2013'}>2013</MenuItem>
+                    <MenuItem value={'2014'}>2014</MenuItem>
+                    <MenuItem value={'2015'}>2015</MenuItem>
+                    <MenuItem value={'2016'}>2016</MenuItem>
+                    <MenuItem value={'2017'}>2017</MenuItem>
+                    <MenuItem value={'2018'}>2018</MenuItem>
+                    <MenuItem value={'2019'}>2019</MenuItem>
+                    <MenuItem value={'2020'}>2020</MenuItem>
+                    <MenuItem value={'2021'}>2021</MenuItem>
+                    <MenuItem value={'2022'}>2022</MenuItem>
                   </Select>
                 </FormControl>
                 <div style={{ minHeight: '30px', marginTop: '-10px' }}>
@@ -146,7 +158,7 @@ function App() {
             <Grid item xs={4}>
               <Item className="Item">
                 Map
-                <Map selectedProvinces={selectedProvinces} selectedProvince={selectedProvince} selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} pollutant={pollutant} year={years} />
+                <Map setHoveredRegion={setHoveredRegion} selectedProvinces={selectedProvinces} selectedProvince={selectedProvince} selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} pollutant={pollutant} year={years} />
               </Item>
             </Grid>
             <Grid item xs={5.7}>
@@ -162,7 +174,7 @@ function App() {
             </Grid>
             <Grid item xs={5}>
               <Item className="Item">ScatterPlot
-                <ScatterPlot year={years} onProvinceHover={handleProvinceHover} onProvinceLeave={handleProvinceLeave} onProvincesSelect={setSelectedProvinces} selectedProvinces={selectedProvinces} />
+                <ScatterPlot year={years} hoveredRegion={hoveredRegion} onProvinceHover={handleProvinceHover} onProvinceLeave={handleProvinceLeave} onProvincesSelect={setSelectedProvinces} selectedProvinces={selectedProvinces} />
               </Item>
             </Grid>
           </Grid>
