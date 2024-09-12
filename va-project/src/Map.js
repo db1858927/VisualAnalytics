@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
-const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvince, selectedProvinces, setHoveredRegion }) => {
+const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvince, selectedProvinces, setHoveredRegion, setHoveredProvincia }) => {
   const svgRef = useRef();
   const initialFeaturesRef = useRef(null);
   const legendRef = useRef();
@@ -14,6 +14,25 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
   const updateBorders = () => {
     const svg = d3.select(svgRef.current);
     svg.selectAll("path.province-border")
+      .style("stroke-width", d => {
+        if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
+          return "2px";
+        }
+        if (selectedProvince && selectedProvince.includes(d.properties.prov_name)) {
+          return "2px";
+        }
+        return "0.2px"; // Default stroke width
+      })
+      .style("opacity", d => {
+        if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
+          return 1;
+        }
+        if (selectedProvince && selectedProvince.includes(d.properties.prov_name)) {
+          return 1;
+        }
+        return 0.7; // Default opacity
+      });
+      svg.selectAll("path.provincia")
       .style("stroke-width", d => {
         if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
           return "2px";
@@ -442,6 +461,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
 
 
       }
+      setHoveredProvincia(d.properties.prov_name); 
       
 
     };
@@ -456,6 +476,8 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
       tooltip.transition()
         .duration(500)
         .style("opacity", 0);
+
+        setHoveredProvincia(null);
 
         
     };
@@ -504,6 +526,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
           .on("mouseleave", isProvincia ? mouseLeaveprovincia : mouseLeaveRegion)
           .on("click", isProvincia ? null : clickRegion);
 
+          updateBorders();
           
       }
       else {
@@ -591,6 +614,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
     const clickRegion = function (event, d) {
       const region = regionNameMapping[d.properties.name] || d.properties.name;
       setSelectedRegion(region);
+      setHoveredRegion(null);
     };
 
     const resetZoom = () => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
-const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect, selectedProvinces, hoveredRegion }) => {
+const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect, selectedProvinces, hoveredRegion, hoverProvincia }) => {
   const svgRef = useRef();
   const legendRef = useRef();
   const tooltipRef = useRef(); // Ref per il tooltip
@@ -204,13 +204,18 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
       .style("stroke", d => selectedProvinces.includes(d['Provincia']) ? "lightgray" : "none")
       .style("stroke-width", d => selectedProvinces.includes(d['Provincia']) ? "2px" : "0px")
       .on("mouseover", function (event, d) {
-        d3.select(this).transition().attr("r", 7);
+        d3.select(this).transition().attr("r", 7)
+        .style("stroke",  "lightgray" )
+        .style("stroke-width", "2px" )
+        ;
         labels.filter(label => label['Provincia'] === d['Provincia']).transition().style("opacity", 0.8);
         onProvinceHover(d['Provincia']);
       })
       .on("mouseout", function (event, d) {
         if (!selectedProvinces.includes(d['Provincia'])) {
-          d3.select(this).transition().attr("r", 5);
+          d3.select(this).transition().attr("r", 5)
+          .style("stroke",  "none" )
+        .style("stroke-width", "0px" );
           labels.filter(label => label['Provincia'] === d['Provincia']).transition().style("opacity", 0);
         }
         onProvinceLeave();
@@ -391,19 +396,41 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
   useEffect(() => {
     const svg = d3.select(svgRef.current);
   
-    console.log("Hovered region:", hoveredRegion);  // Verifica che hoveredRegion sia corretto
+    console.log("Hovered region:", hoverProvincia);  // Verifica che hoveredRegion sia corretto
     svg.selectAll("circle")
       .transition()
       .duration(200)
       .attr("r", d => {
-        console.log("Provincia:", d.Provincia, "Regione:", provinceToRegionMap[d.Provincia]);  // Controlla il mapping
-        return provinceToRegionMap[d.Provincia] === hoveredRegion ? 7 : 5;
+        // Verifica sia la regione che la provincia
+        if (d.Provincia === hoverProvincia || provinceToRegionMap[d.Provincia] === hoveredRegion) {
+          return 7; // Dimensione cerchio più grande se corrisponde
+        } 
+        return 5; // Dimensione standard altrimenti
       })
-      .style("opacity", d => provinceToRegionMap[d.Provincia] === hoveredRegion ? 1 : 0.5)
-      .style("stroke", d => provinceToRegionMap[d.Provincia] === hoveredRegion ? "#d3d3d3" : "none")
-      .style("stroke-width", d => provinceToRegionMap[d.Provincia] === hoveredRegion ? "2px" : "0px")
+      .style("opacity", d => {
+        // Maggiore opacità per i punti corrispondenti alla regione o alla provincia
+        if (d.Provincia === hoverProvincia || provinceToRegionMap[d.Provincia] === hoveredRegion) {
+          return 1;
+        }
+        return 0.5;
+      })
+      .style("stroke", d => {
+        // Bordo per i punti corrispondenti alla regione o provincia
+        if (d.Provincia === hoverProvincia || provinceToRegionMap[d.Provincia] === hoveredRegion) {
+          return "#d3d3d3"; // Colore del bordo per quelli selezionati
+        }
+        return "none"; // Nessun bordo altrimenti
+      })
+      .style("stroke-width", d => {
+        // Spessore del bordo per i punti corrispondenti
+        if (d.Provincia === hoverProvincia || provinceToRegionMap[d.Provincia] === hoveredRegion) {
+          return "2px";
+        }
+        return "0px"; // Nessun bordo per gli altri
+      });
+  }, [hoveredRegion, hoverProvincia]);
   
-  }, [hoveredRegion]);
+
   return (
     <div style={{ display: 'flex' }}>
       <svg ref={svgRef} style={{ height: '350px', width: '400px', overflow: 'visible' }}></svg>

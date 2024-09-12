@@ -57,6 +57,7 @@ function App() {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedProvinces, setSelectedProvinces] = useState([]);
   const [hoveredRegion, setHoveredRegion] = useState(null);
+  const [hoverProvincia, setHoveredProvincia] = useState(null);
 
   const handleChangeYears = (event) => {
     setYears(event.target.value);
@@ -158,7 +159,7 @@ function App() {
             <Grid item xs={4}>
               <Item className="Item">
                 Map
-                <Map setHoveredRegion={setHoveredRegion} selectedProvinces={selectedProvinces} selectedProvince={selectedProvince} selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} pollutant={pollutant} year={years} />
+                <Map setHoveredProvincia={setHoveredProvincia} setHoveredRegion={setHoveredRegion} selectedProvinces={selectedProvinces} selectedProvince={selectedProvince} selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} pollutant={pollutant} year={years} />
               </Item>
             </Grid>
             <Grid item xs={5.7}>
@@ -174,7 +175,7 @@ function App() {
             </Grid>
             <Grid item xs={5}>
               <Item className="Item">ScatterPlot
-                <ScatterPlot year={years} hoveredRegion={hoveredRegion} onProvinceHover={handleProvinceHover} onProvinceLeave={handleProvinceLeave} onProvincesSelect={setSelectedProvinces} selectedProvinces={selectedProvinces} />
+                <ScatterPlot year={years} hoverProvincia={hoverProvincia} hoveredRegion={hoveredRegion} onProvinceHover={handleProvinceHover} onProvinceLeave={handleProvinceLeave} onProvincesSelect={setSelectedProvinces} selectedProvinces={selectedProvinces} />
               </Item>
             </Grid>
           </Grid>
