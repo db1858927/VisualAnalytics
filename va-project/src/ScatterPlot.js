@@ -1,11 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
+import { pink } from '@mui/material/colors';
+import Checkbox from '@mui/material/Checkbox';
 
-const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect, selectedProvinces, hoveredRegion, hoverProvincia }) => {
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
+const ScatterPlot = ({ year, pollutant, setHoveredProvincia, onProvincesSelect, selectedProvinces, hoveredRegion, hoverProvincia }) => {
   const svgRef = useRef();
   const legendRef = useRef();
   const tooltipRef = useRef(); // Ref per il tooltip
   const [data, setData] = useState([]); // Dati caricati solo una volta
+  const [showHigh, setShowHigh] = useState(true);
+  const [showMid, setShowMid] = useState(true);
+  const [showLow, setShowLow] = useState(true);
   // const [selectedProvinces, setSelectedProvinces] = useState([]); // Stato per memorizzare le province selezionate
 
   const provinceToRegionMap = {
@@ -118,12 +125,67 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
     'Viterbo': 'Lazio'
   };
 
+  const updateColors = () => {
+    const svg = d3.select(svgRef.current);
+
+    svg.selectAll("circle")
+      .style("fill", d => {
+
+        if (pollutant == '_pm10') {
+          if (d.pm10 > 50 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+          if (d.pm10 <= 50 && d.pm10 > 20 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+          if (d.pm10 <= 20 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+          return "white"; // Non mostrare se non selezionato
+        }
+        else if (pollutant == '_pm25') {
+          if (d.pm25 > 25 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+          if (d.pm25 <= 25 && d.pm25 > 10 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+          if (d.pm25 <= 10 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+          return "white"; // Non mostrare se non selezionato
+        }
+        else if (pollutant == '_no2') {
+          if (d.no2 > 120 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+          if (d.no2 <= 120 && d.no2 > 90 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+          if (d.no2 <= 90 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+          return "white"; // Non mostrare se non selezionato
+        }
+        else if (pollutant == '_o3') {
+          if (d.o3 > 130 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+          if (d.o3 <= 130 && d.o3 > 50 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+          if (d.o3 <= 50 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+          return "white"; // Non mostrare se non selezionato
+        }
+        else if (pollutant == '_total') {
+
+          if (d.o3 > 130 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+          if (d.o3 <= 130 && d.o3 > 50 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+          if (d.o3 <= 50 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+          return "white"; // Non mostrare se non selezionato
+        }
+
+
+      })
+
+  };
+
+  useEffect(() => {
+    const svg = d3.select(svgRef.current);
+  
+    svg.selectAll("circle")
+      .data(data)
+      .attr("r", d => selectedProvinces.includes(d['Provincia']) ? 7 : 5)
+      .style("stroke", d => selectedProvinces.includes(d['Provincia']) ? "lightgray" : "none")
+      .style("stroke-width", d => selectedProvinces.includes(d['Provincia']) ? "2px" : "0px")
+      .style("opacity", d => selectedProvinces.includes(d['Provincia']) ? 1 : 0.8);
+  }, [selectedProvinces, data]);
+  
+
   useEffect(() => {
     // Carica i dati solo al cambio dell'anno
     d3.csv(`./tsne-results/Province/tsne_results_${year}.csv`).then(loadedData => {
       loadedData.forEach(d => {
-        d['Component 1'] = +d['Component 1'];
-        d['Component 2'] = +d['Component 2'];
+        d['Axis 1'] = +d['Axis 1'];
+        d['Axis 2'] = +d['Axis 2'];
       });
       setData(loadedData); // Salva i dati e disegna il grafico
       drawInitialPlot(loadedData); // Disegna il grafico iniziale
@@ -133,15 +195,12 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
   }, [year]);
 
   // Effetto per aggiornare i cerchi selezionati
-  useEffect(() => {
-    // Aggiorna i cerchi selezionati quando `selectedProvinces` cambia
-    updateSelectedCircles(selectedProvinces);
-  }, [data,selectedProvinces]);
+  
 
   const clusters = Array.from(new Set(data.map(d => d.labels))).sort();
   const colorScale = d3.scaleOrdinal()
     .domain(clusters)
-    .range([ "#9b59b6", "#ffe135", "#1abc9c"])
+    .range(["#9b59b6", "#ffe135", "#1abc9c"])
 
 
   // Funzione per disegnare il grafico solo una volta al caricamento
@@ -163,13 +222,13 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
       .append("rect")
       .attr("width", width)
       .attr("height", height);
-    
+
     const plotArea = svg.append('g')
-      .attr('transform',` translate(${margin.left}, ${margin.top})`)
+      .attr('transform', ` translate(${margin.left}, ${margin.top})`)
       .attr("clip-path", "url(#clip)");
 
-    const xExtent = d3.extent(data, d => d['Component 1']);
-    const yExtent = d3.extent(data, d => d['Component 2']);
+    const xExtent = d3.extent(data, d => d['Axis 1']);
+    const yExtent = d3.extent(data, d => d['Axis 2']);
     const xMargin = (xExtent[1] - xExtent[0]) * 0.05;
     const yMargin = (yExtent[1] - yExtent[0]) * 0.05;
 
@@ -189,66 +248,108 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
       .attr("transform", `translate(${margin.left},${margin.top})`)
       .call(d3.axisLeft(y));
 
-    const colorScale = d3.scaleOrdinal()
-      .domain([...new Set(data.map(d => d.labels))])
-      .range(["#9b59b6", "#ffe135", "#1abc9c"]);
+
 
     const circles = plotArea.selectAll("circle")
       .data(data)
       .enter().append("circle")
-      .attr("cx", d => x(d['Component 1']))
-      .attr("cy", d => y(d['Component 2']))
+      .attr("cx", d => x(d['Axis 1']))
+      .attr("cy", d => y(d['Axis 2']))
       .attr("r", 5)
-      .style("fill", d => colorScale(d['labels']))
+      .style("fill", d => {
+        if (pollutant == '_pm10') {
+          if (d.pm10 > 50 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+          if (d.pm10 <= 50 && d.pm10 > 20 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+          if (d.pm10 <= 20 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+          return "white"; // Non mostrare se non selezionato
+        }
+        else if (pollutant == '_pm25') {
+          if (d.pm25 > 25 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+          if (d.pm25 <= 25 && d.pm25 > 10 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+          if (d.pm25 <= 10 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+          return "white"; // Non mostrare se non selezionato
+        }
+        else if (pollutant == '_no2') {
+          if (d.no2 > 120 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+          if (d.no2 <= 120 && d.no2 > 90 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+          if (d.no2 <= 90 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+          return "white"; // Non mostrare se non selezionato
+        }
+        else if (pollutant == '_o3') {
+          if (d.o3 > 130 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+          if (d.o3 <= 130 && d.o3 > 50 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+          if (d.o3 <= 50 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+          return "white"; // Non mostrare se non selezionato
+        }
+
+      })
       .style("opacity", d => selectedProvinces.includes(d['Provincia']) ? 1 : 0.8)
       .style("stroke", d => selectedProvinces.includes(d['Provincia']) ? "lightgray" : "none")
       .style("stroke-width", d => selectedProvinces.includes(d['Provincia']) ? "2px" : "0px")
-      .on("mouseover", function (event, d) {
-        d3.select(this).transition().attr("r", 7)
-        .style("stroke",  "lightgray" )
-        .style("stroke-width", "2px" )
-        ;
-        labels.filter(label => label['Provincia'] === d['Provincia']).transition().style("opacity", 0.8);
-        onProvinceHover(d['Provincia']);
-      })
       .on("mouseout", function (event, d) {
+        // Se la provincia non è selezionata, riportala allo stato normale
         if (!selectedProvinces.includes(d['Provincia'])) {
-          d3.select(this).transition().attr("r", 5)
-          .style("stroke",  "none" )
-        .style("stroke-width", "0px" );
-          labels.filter(label => label['Provincia'] === d['Provincia']).transition().style("opacity", 0);
+          d3.select(this)
+            .transition()
+            .attr("r", 5)  // Torna alla dimensione normale
+            .style("stroke", "none")  // Rimuovi il bordo
+            .style("stroke-width", "0px")
+            .style("opacity", 0.8);  // Torna all'opacità standard
+      
+          // Nascondi l'etichetta solo se non è selezionata
+          labels.filter(label => label['Provincia'] === d['Provincia'])
+            .transition()
+            .style("opacity", 0);
         }
-        onProvinceLeave();
+      
+        // Rilascia l'evento per il mouseout
+        setHoveredProvincia(null);
       })
+      
+      // Evento mouseover (per evidenziare il cerchio solo se non è selezionato)
+      .on("mouseover", function (event, d) {
+        if (!selectedProvinces.includes(d['Provincia'])) {
+          d3.select(this)
+            .transition()
+            .attr("r", 7)  // Ingrandisci il cerchio
+            .style("stroke", "lightgray")  // Aggiungi il bordo
+            .style("stroke-width", "2px");
+      
+          // Mostra l'etichetta solo se il cerchio non è selezionato
+          labels.filter(label => label['Provincia'] === d['Provincia'])
+            .transition()
+            .style("opacity", 0.8);
+        }
+      
+        // Aggiungi qualsiasi altra logica su mouseover
+        setHoveredProvincia(d['Provincia']);
+      })
+      
+      // Evento click (gestisce la selezione)
       .on("click", function (event, d) {
-        // Aggiorna lo stato selectedProvinces
+        // Usa lo stato di React per gestire la selezione
         onProvincesSelect((prevSelectedProvinces) => {
           const isSelected = prevSelectedProvinces.includes(d['Provincia']);
           let newSelection;
       
           if (isSelected) {
-            // Rimuovi la provincia se è già selezionata
+            // Rimuovi la provincia selezionata
             newSelection = prevSelectedProvinces.filter(p => p !== d['Provincia']);
           } else {
-            // Aggiungi la provincia se non è selezionata
+            // Aggiungi la provincia selezionata
             newSelection = [...prevSelectedProvinces, d['Provincia']];
           }
       
-          // Aggiorna la selezione esternamente
-          onProvincesSelect(newSelection);
-      
-          // Aggiorna il tooltip immediatamente con la nuova selezione
-          d3.select(tooltipRef.current).html(`Selected provinces: ${newSelection.join(", ")}`);
-          
-          // Restituisci il nuovo stato
           return newSelection;
         });
       });
+      
+     
     const labels = svg.selectAll("text.label")
       .data(data)
       .enter().append("text")
-      .attr("x", d => x(d['Component 1']) + 8)
-      .attr("y", d => y(d['Component 2']) + 2)
+      .attr("x", d => x(d['Axis 1']) + 8)
+      .attr("y", d => y(d['Axis 2']) + 2)
       .text(d => d['Provincia'])
       .style("font-size", "12px")
       .style("fill", "white")
@@ -268,120 +369,127 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
         yAxis.call(d3.axisLeft(newY));
 
         circles
-          .attr('cx', d => newX(d['Component 1']))
-          .attr('cy', d => newY(d['Component 2']));
+          .attr('cx', d => newX(d['Axis 1']))
+          .attr('cy', d => newY(d['Axis 2']));
       });
 
     svgElement.call(zoom);
 
     const legendSvg = d3.select(legendRef.current);
 
-     
-      legendSvg.selectAll("*").remove();
-      const legendWidth = 150;
-      const legendHeight = 80;
 
-      legendSvg
-        .attr("width", legendWidth)
-        .attr("height", legendHeight)
-        .style("position", "absolute")
-        .style("bottom", "260px")
-        .style("right", "40px")
-        .style("padding", "5px")
-        .style("border-radius", "5px")
-        .style("box-shadow", "0 0 10px rgba(0,0,0,0.2)");
+    legendSvg.selectAll("*").remove();
+    const legendWidth = 150;
+    const legendHeight = 80;
 
-      const size = 10;
+    legendSvg
+      .attr("width", legendWidth)
+      .attr("height", legendHeight)
+      .style("position", "absolute")
+      .style("bottom", "260px")
+      .style("right", "40px")
+      .style("padding", "5px")
+      .style("border-radius", "5px")
+      .style("box-shadow", "0 0 10px rgba(0,0,0,0.2)");
 
-      legendSvg.selectAll("mydots")
-        .data(clusters)
-        .enter()
-        .append("circle")
-        .attr("cx", 10 + size / 2) 
-        .attr("cy", (d, i) => 10 + (i + 1) * (size + 5) + size / 2) 
-        .attr("r", size / 2) 
-        .style("fill", d => colorScale(d));
+    const size = 10;
 
-      legendSvg.selectAll("mylabels")
-        .data(clusters)
-        .enter()
-        .append("text")
-        .attr("x", 10 + size * 1.2)
-        .attr("y", (d, i) => 10 + (i + 1) * (size + 5) + (size / 2))
-        .style("fill", d => colorScale(d))
-        .text(function (d) {
-          
-          if (year === '2010') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Low level of pm2.5";
-            if(d == 2 ) return "Mid level of pm2.5";
-          } if (year === '2011') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Low level of pm2.5";
-            if(d == 2 ) return "Mid level of pm2.5";
-          } if (year === '2012') {
-            if(d == 1 ) return "Low level of pm2.5";
-            if(d == 0 ) return "Mid level of pm2.5";
-            if(d == 2 ) return "High level of pm2.5";
-          } if (year === '2013') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Mid level of pm2.5";
-            if(d == 2 ) return "Low level of pm2.5";
-          } if (year === '2014') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Low level of pm2.5";
-            if(d == 2 ) return "Mid level of pm2.5";
-          } if (year === '2015') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Low level of pm2.5";
-            if(d == 2 ) return "Mid level of pm2.5";
-          } if (year === '2016') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Low level of pm2.5";
-            if(d == 2 ) return "Mid level of pm2.5";
-          } if (year === '2017') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Low level of pm2.5";
-            if(d == 2 ) return "Mid level of pm2.5";
-          } if (year === '2018') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Low level of pm2.5";
-            if(d == 2 ) return "Mid level of pm2.5";
-          } if (year === '2019') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Low level of pm2.5";
-            if(d == 2 ) return "Mid level of pm2.5";
-          } if (year === '2012') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Low level of pm2.5";
-            if(d == 2 ) return "Mid level of pm2.5";
-          } if (year === '2021') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Low level of pm2.5";
-            if(d == 2 ) return "Mid level of pm2.5";
-          } if (year === '2022') {
-            if(d == 1 ) return "High level of pm2.5";
-            if(d == 0 ) return "Low level of pm2.5";
-            if(d == 2 ) return "Mid level of pm2.5";
-          } 
-        })
-        .attr("text-anchor", "left")
-        .style("alignment-baseline", "middle")
-        .style("font-size", "10px");;
+    legendSvg.selectAll("mydots")
+      .data(clusters)
+      .enter()
+      .append("circle")
+      .attr("cx", 10 + size / 2)
+      .attr("cy", (d, i) => 10 + (i + 1) * (size + 5) + size / 2)
+      .attr("r", size / 2)
+      .style("fill", d => colorScale(d));
 
-      legendSvg.append("text")
-        .attr("x", 10)
-        .attr("y", 15)
-        .text('Clusters')
-        .attr("fill", "white")
-        .style("font-size", "12px");
-    
+    legendSvg.selectAll("mylabels")
+      .data(clusters)
+      .enter()
+      .append("text")
+      .attr("x", 10 + size * 1.2)
+      .attr("y", (d, i) => 10 + (i + 1) * (size + 5) + (size / 2))
+      .style("fill", d => colorScale(d))
+      .text(function (d) {
+
+        if (year === '2010') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Low level of pm2.5";
+          if (d == 2) return "Mid level of pm2.5";
+        } if (year === '2011') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Low level of pm2.5";
+          if (d == 2) return "Mid level of pm2.5";
+        } if (year === '2012') {
+          if (d == 1) return "Low level of pm2.5";
+          if (d == 0) return "Mid level of pm2.5";
+          if (d == 2) return "High level of pm2.5";
+        } if (year === '2013') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Mid level of pm2.5";
+          if (d == 2) return "Low level of pm2.5";
+        } if (year === '2014') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Low level of pm2.5";
+          if (d == 2) return "Mid level of pm2.5";
+        } if (year === '2015') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Low level of pm2.5";
+          if (d == 2) return "Mid level of pm2.5";
+        } if (year === '2016') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Low level of pm2.5";
+          if (d == 2) return "Mid level of pm2.5";
+        } if (year === '2017') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Low level of pm2.5";
+          if (d == 2) return "Mid level of pm2.5";
+        } if (year === '2018') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Low level of pm2.5";
+          if (d == 2) return "Mid level of pm2.5";
+        } if (year === '2019') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Low level of pm2.5";
+          if (d == 2) return "Mid level of pm2.5";
+        } if (year === '2012') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Low level of pm2.5";
+          if (d == 2) return "Mid level of pm2.5";
+        } if (year === '2021') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Low level of pm2.5";
+          if (d == 2) return "Mid level of pm2.5";
+        } if (year === '2022') {
+          if (d == 1) return "High level of pm2.5";
+          if (d == 0) return "Low level of pm2.5";
+          if (d == 2) return "Mid level of pm2.5";
+        }
+      })
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle")
+      .style("font-size", "10px");;
+
+    legendSvg.append("text")
+      .attr("x", 10)
+      .attr("y", 15)
+      .text('Clusters')
+      .attr("fill", "white")
+      .style("font-size", "12px");
+
   };
 
   // Evidenzia i punti delle province appartenenti alla regione selezionata
- 
 
-  
+
+  const labelStyle = {
+    padding: '2px',
+    borderRadius: '0px',
+    display: 'block',  // Questo assicura che ogni label sia su una riga separata
+    marginBottom: '0px', // Spazio tra i label
+    cursor: 'pointer',
+  };
+
 
   // Funzione per aggiornare solo i cerchi selezionati
   const updateSelectedCircles = (newSelection) => {
@@ -393,9 +501,11 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
       .transition().attr("r", d => newSelection.includes(d['Provincia']) ? 7 : 5);
   };
 
+ 
+
   useEffect(() => {
     const svg = d3.select(svgRef.current);
-  
+
     console.log("Hovered region:", hoverProvincia);  // Verifica che hoveredRegion sia corretto
     svg.selectAll("circle")
       .transition()
@@ -404,7 +514,7 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
         // Verifica sia la regione che la provincia
         if (d.Provincia === hoverProvincia || provinceToRegionMap[d.Provincia] === hoveredRegion) {
           return 7; // Dimensione cerchio più grande se corrisponde
-        } 
+        }
         return 5; // Dimensione standard altrimenti
       })
       .style("opacity", d => {
@@ -429,31 +539,112 @@ const ScatterPlot = ({ year, onProvinceHover, onProvinceLeave, onProvincesSelect
         return "0px"; // Nessun bordo per gli altri
       });
   }, [hoveredRegion, hoverProvincia]);
+
+  useEffect(() => {
+    updateColors();
+  }, [showHigh, showMid, showLow, pollutant]);
+
   
+  // Poi gestire i clic in D3, ma lasciare a React l'aggiornamento dello stato
+  useEffect(() => {
+    const svg = d3.select(svgRef.current);
+  
+    svg.selectAll("circle")
+      .on("click", function (event, d) {
+        // Qui gestiamo la selezione delle province usando React
+        onProvincesSelect((prevSelectedProvinces) => {
+          const isSelected = prevSelectedProvinces.includes(d['Provincia']);
+          if (isSelected) {
+            return prevSelectedProvinces.filter(p => p !== d['Provincia']); // Rimuove la provincia selezionata
+          } else {
+            return [...prevSelectedProvinces, d['Provincia']]; // Aggiunge la provincia selezionata
+          }
+        });
+      });
+  }, [data, onProvincesSelect]);
+
 
   return (
     <div style={{ display: 'flex' }}>
       <svg ref={svgRef} style={{ height: '350px', width: '400px', overflow: 'visible' }}></svg>
-      <svg ref={legendRef} style={{ position: 'absolute', bottom: '20px' }}></svg>
-      {selectedProvinces.length > 0 && (
+      {/* <svg ref={legendRef} style={{ position: 'absolute', bottom: '20px' }}></svg> */}
+
+      <div style={{  display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        <label style={labelStyle}>
+        <Checkbox sx={{
+          '&:hover': { bgcolor: 'transparent' }, 
+          transform: 'scale(0.8)',
+          padding: '0px'
+         
+        }} checked={showHigh}
+        onChange={() => setShowHigh(!showHigh)} defaultChecked  color="secondary" />
+    
+          {/* <input
+            type="checkbox"
+            checked={showHigh}
+            onChange={() => setShowHigh(!showHigh)}
+          /> */}
+          High level of {pollutant.replace('_', '')}
+        </label>
+
+        <label style={labelStyle}>
+        <Checkbox  sx={{
+          '&:hover': { bgcolor: 'transparent' }, 
+          transform: 'scale(0.8)',
+          padding: '0px',
+          
+          margin: '0px'
+         
+        }} checked={showMid}
+        onChange={() => setShowMid(!showMid)} defaultChecked />
+          {/* <input
+            type="checkbox"
+            checked={showMid}
+            onChange={() => setShowMid(!showMid)}
+          /> */}
+          Mid level of {pollutant.replace('_', '')}
+        </label>
+
+        <label style={labelStyle}>
+        <Checkbox sx={{
+          '&:hover': { bgcolor: 'transparent' }, 
+          transform: 'scale(0.8)',
+          padding: '0px',
+          margin: '0px'
+         
+        }} checked={showLow}
+        onChange={() => setShowLow(!showLow)} defaultChecked color="success" />
+          {/* <input
+            type="checkbox"
+            checked={showLow}
+            onChange={() => setShowLow(!showLow)}
+          /> */}
+          Low level of {pollutant.replace('_', '')}
+        </label>
+        {selectedProvinces.length > 0 && (
         <div
           ref={tooltipRef}
           style={{
             padding: '10px',
             marginLeft: '10px',
-            textSize: '10px',
+            fontSize: '12px',
             borderRadius: '5px',
             maxHeight: '200px',
             overflowY: 'auto',
             whiteSpace: 'pre-wrap',
             width: '150px',
-            marginTop: '120px'
+           
+            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
           }}
         >
           Selected provinces: {selectedProvinces.join(", ")}
         </div>
       )}
+      </div>
+
+      
     </div>
+
   );
 };
 

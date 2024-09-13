@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
-const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvince, selectedProvinces, setHoveredRegion, setHoveredProvincia }) => {
+const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year, hoverProvincia, selectedProvinces, setHoveredRegion, setHoveredProvincia }) => {
   const svgRef = useRef();
   const initialFeaturesRef = useRef(null);
   const legendRef = useRef();
@@ -18,7 +18,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
         if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
           return "2px";
         }
-        if (selectedProvince && selectedProvince.includes(d.properties.prov_name)) {
+        if (hoverProvincia && hoverProvincia.includes(d.properties.prov_name)) {
           return "2px";
         }
         return "0.2px"; // Default stroke width
@@ -27,7 +27,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
         if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
           return 1;
         }
-        if (selectedProvince && selectedProvince.includes(d.properties.prov_name)) {
+        if (hoverProvincia && hoverProvincia.includes(d.properties.prov_name)) {
           return 1;
         }
         return 0.7; // Default opacity
@@ -37,7 +37,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
         if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
           return "2px";
         }
-        if (selectedProvince && selectedProvince.includes(d.properties.prov_name)) {
+        if (hoverProvincia && hoverProvincia.includes(d.properties.prov_name)) {
           return "2px";
         }
         return "0.2px"; // Default stroke width
@@ -46,12 +46,43 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
         if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
           return 1;
         }
-        if (selectedProvince && selectedProvince.includes(d.properties.prov_name)) {
+        if (hoverProvincia && hoverProvincia.includes(d.properties.prov_name)) {
           return 1;
         }
         return 0.7; // Default opacity
       });
+
+      
   };
+
+  useEffect(() => {
+    if (hoveredRegion ) {
+      // Se c'è una regione o provincia selezionata, aggiorna il bordo
+      const svg = d3.select(svgRef.current);
+  
+      svg.selectAll("path.regione")
+        .style("stroke-width", d => {
+          return hoveredRegion === d.properties.name ? "2px" : "0.8px";
+        })
+        .style("opacity", d => {
+          return hoveredRegion === d.properties.name ? 1 : 0.7;
+        });
+  
+     
+  
+    } else {
+      // Se nessuna regione o provincia è selezionata, ripristina i bordi
+      const svg = d3.select(svgRef.current);
+  
+      svg.selectAll("path.regione")
+        .style("stroke-width", "0.8px")
+        .style("opacity", 0.7);
+  
+      svg.selectAll("path.provincia")
+        .style("stroke-width", "0.2px")
+        .style("opacity", 0.7);
+    }
+  }, [hoveredRegion]);
   
 
   useEffect(() => {
@@ -614,7 +645,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
     const clickRegion = function (event, d) {
       const region = regionNameMapping[d.properties.name] || d.properties.name;
       setSelectedRegion(region);
-      setHoveredRegion(null);
+      
     };
 
     const resetZoom = () => {
@@ -753,7 +784,7 @@ const Map = ({ selectedRegion, setSelectedRegion, pollutant, year, selectedProvi
     if (dataLoaded) {
       updateBorders();  // Aggiorna solo i bordi delle province quando selectedProvinces o selectedProvince cambiano
     }
-  }, [selectedProvinces, selectedProvince, dataLoaded]);
+  }, [selectedProvinces, hoverProvincia, dataLoaded]);
 
   return (
     <div style={{ width: '100%', height: '46vh', overflow: 'hidden', position: 'relative', top: 0, left: 0 }}>

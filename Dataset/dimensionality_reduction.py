@@ -8,7 +8,7 @@ from sklearn.cluster import KMeans
 import seaborn as sns
 
 # Dataset - cambia per ogni anno
-df = pd.read_csv('years_total/dati_2022.csv')
+df = pd.read_csv('years_total/dati_2010.csv')
 
 # Seleziona le colonne per la t-SNE (escludendo eventuali colonne non numeriche)
 features = ['no2', 'pm10', 'pm25', 'o3']
@@ -54,13 +54,16 @@ plt.show()
 
 
 
-df_tsne = pd.DataFrame(tsne_results, columns=['Component 1', 'Component 2'])
-df_tsne['labels'] = region_means['cluster'] 
+df_tsne = pd.DataFrame(tsne_results, columns=['Axis 1', 'Axis 2'])
 df_tsne['Provincia'] = region_means['Provincia']
+df_tsne['no2']=region_means['no2']
+df_tsne['pm10']=region_means['pm10']
+df_tsne['pm25']=region_means['pm25']
+df_tsne['o3']=region_means['o3']
 
 
 # # # Salvataggio del DataFrame in un file CSV
-df_tsne.to_csv('tsne-results/Province/tsne_results_2022.csv', index=False)
+df_tsne.to_csv('tsne-results/Province/tsne_results_2010.csv', index=False)
 
 
 

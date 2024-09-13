@@ -1,17 +1,45 @@
-import React, { useRef, useEffect,useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import './App.css';
 
-const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
+const BoxPlot = ({ hoverProvincia, hoveredRegion, selectedRegion, allData, setSelectedRegion, pollutant, selectedProvinces, setHoveredProvincia, setHoveredRegion }) => {
     const svgRef = useRef();
     const tooltipRef = useRef();
     const legendRef = useRef();
-    
-    
+    const [groupData, setGroupData] = useState(null);
+    const xScaleRef = useRef(null); // Ref per salvare la scala X
+    const yScaleRef = useRef(null);
+
+
+
+    useEffect(() => {
+        const svg = d3.select(svgRef.current);
+
+        // Evidenzia il box plot quando si passa sopra una provincia nella mappa
+        svg.selectAll("rect").each(function (d) {
+            const rect = d3.select(this);
+            if (d === hoverProvincia || d === hoveredRegion) {
+                rect.transition()
+                    .duration(200)
+                    .attr("stroke", "black")
+
+                    .style("opacity", 1);
+            } else {
+                rect.transition()
+                    .duration(200)
+                    .attr("stroke", "white")
+                    .style("opacity", 0.5);
+            }
+        });
+    }, [hoverProvincia, hoveredRegion]);
+
+
+
+
 
     useEffect(() => {
 
-        
+
         if (pollutant === '_total') {
             return;
         }
@@ -23,19 +51,21 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
             "Trentino-Alto Adige/Südtirol": "Trentino-Alto Adige",
             "Friuli-Venezia Giulia": "Friuli Venezia Giulia"
         };
-    
+
         const getRegionName = (name) => {
             return regionNameMapping[name] || name;
         };
 
 
-        
+
         const tooltip = d3.select(tooltipRef.current);
 
-        const data = (selectedRegion) 
-        ? allData.filter(d => getRegionName(d.Regione) === selectedRegion && d.Provincia && d.media_yy)
-        : allData.filter(d => d.Regione && d.media_yy);
-
+        // Filtro dei dati: se selectedProvinces non è vuoto, mostra solo quelle province
+        const data = (selectedProvinces && selectedProvinces.length > 0)
+            ? allData.filter(d => selectedProvinces.includes(d.Provincia) && d.media_yy)
+            : (selectedRegion
+                ? allData.filter(d => getRegionName(d.Regione) === selectedRegion && d.Provincia && d.media_yy)
+                : allData.filter(d => d.Regione && d.media_yy));
 
         const margin = { top: 10, right: 40, bottom: 60, left: 50 };
         const width = 540 - margin.left - margin.right;
@@ -47,26 +77,75 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
             .append('g')
             .attr('transform', `translate(${margin.left},${margin.top})`);
 
-        const groups = (selectedRegion ) ? Array.from(new Set(data.map(d => d.Provincia))) : Array.from(new Set(data.map(d => d.Regione)));
+        const groups = (selectedProvinces && selectedProvinces.length > 0)
+            ? selectedProvinces
+            : (selectedRegion
+                ? Array.from(new Set(data.map(d => d.Provincia)))
+                : Array.from(new Set(data.map(d => d.Regione))));
+
         const groupData = new Map();
 
         groups.forEach(group => {
-            const region = group
-            
-            const values = data.filter(d => ((selectedRegion ) ? d.Provincia : d.Regione) === group).map(d => +d.media_yy);
+            // Filtra i valori in base alla provincia o regione
+            const filteredData = data.filter(d => {
+                if (selectedProvinces && selectedProvinces.length > 0) {
+                    return d.Provincia === group;  // Filtra per provincia
+                } else if (selectedRegion) {
+                    return d.Provincia === group;  // Filtra per provincia
+                } else {
+                    return d.Regione === group;  // Filtra per regione
+                }
+            });
+
+            const values = filteredData.map(d => +d.media_yy);
 
             if (values.length > 0) {
-            values.sort(d3.ascending);
-            const q1 = d3.quantile(values, 0.25);
-            const median = d3.quantile(values, 0.5);
-            const q3 = d3.quantile(values, 0.75);
-            const interQuantileRange = q3 - q1;
-            const min = Math.max(d3.min(values), q1 - 1.5 * interQuantileRange);
-            const max = Math.min(d3.max(values), q3 + 1.5 * interQuantileRange);
-            const mean = d3.mean(values) ? d3.mean(values).toFixed(2) : '0';
-            const outliers = values.length > 1 ? values.filter(v => v < min || v > max) : [];
-            groupData.set(group, { q1, median, q3, interQuantileRange, min, max, mean, values, outliers, region });
+                values.sort(d3.ascending);
+                const q1 = d3.quantile(values, 0.25);
+                const median = d3.quantile(values, 0.5);
+                const q3 = d3.quantile(values, 0.75);
+                const interQuantileRange = q3 - q1;
+                const min = Math.max(d3.min(values), q1 - 1.5 * interQuantileRange);
+                const max = Math.min(d3.max(values), q3 + 1.5 * interQuantileRange);
+                const mean = d3.mean(values) ? d3.mean(values).toFixed(2) : '0';
+                const outliers = filteredData
+                    .filter(d => +d.media_yy < min || +d.media_yy > max)
+                    .map(d => ({ provincia: d.Provincia, value: +d.media_yy }));
+
+                // Salviamo anche i dati delle province associate a ciascun gruppo (regione)
+                const provinceData = filteredData.map(d => ({ provincia: d.Provincia, mean: +d.media_yy }));
+
+                // Settiamo i dati aggregati nella mappa
+                groupData.set(group, { q1, median, q3, interQuantileRange, min, max, mean, values, outliers, provinceData });
             }
+
+
+
+            setGroupData(groupData);
+
+            const presentRegions = (selectedProvinces && selectedProvinces.length > 0)
+                ? selectedProvinces
+                : (selectedRegion
+                    ? Array.from(new Set(data.map(d => d.Provincia)))
+                    : Array.from(new Set(data.map(d => d.Regione))));
+
+            const xScale = d3.scaleBand()
+                .domain(presentRegions)  // Usa solo le regioni o province visibili nei dati
+                .range([0, width])
+                .paddingInner(1)
+                .paddingOuter(.5);
+
+            // Assegna la scala x al ref
+
+
+            const yScale = d3.scaleLinear()
+                .domain([0, d3.max(allData, d => +d.media_yy) + 10])
+                .range([height, 0]);
+
+            // Assegniamo le scale al ref per poterle utilizzare in altri useEffect
+            xScaleRef.current = xScale;
+            yScaleRef.current = yScale;
+
 
         });
 
@@ -77,7 +156,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
         const maxDomain = Math.max(maxDataValue, 40);
 
         const y = d3.scaleLinear()
-            .domain([minDataValue -5, maxDataValue +5])
+            .domain([minDataValue - 5, maxDataValue + 5])
             .range([height, 0]);
 
         svgElement.append('g')
@@ -92,6 +171,8 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
             .attr("fill", "white")
             .style("font-size", "10px");
 
+
+
         const x = d3.scaleBand()
             .domain(groups)
             .range([0, width])
@@ -105,14 +186,14 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
             .attr("transform", "rotate(-30)")
             .style("text-anchor", "end");
 
-        const boxWidth = (selectedRegion    ) ? 25 : 17;
+        const boxWidth = (selectedRegion) ? 25 : 17;
 
-        
+
 
         groups.forEach(group => {
-            const { q1, median, q3, min, max, mean, outliers,region } = groupData.get(group);
+            const { q1, median, q3, min, max, mean, outliers, region } = groupData.get(group);
             const center = x(group) + x.bandwidth() / 2;
-            
+
             svgElement.append("line")
                 .attr("x1", center)
                 .attr("x2", center)
@@ -121,12 +202,14 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                 .attr("stroke", "white");
 
             const box = svgElement.append("rect")
+
+                .data([group])  // Associa 'group' come dato
                 .attr("x", center - boxWidth / 2)
                 .attr("y", y(q3))
                 .attr("height", y(q1) - y(q3))
                 .attr("width", boxWidth)
                 .attr("stroke", "white")
-                .style("opacity", 0.7)
+                .style("opacity", 0.5)
                 .style("fill", "currentColor");
 
             [min, median, max].forEach(val => {
@@ -140,7 +223,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
 
 
 
-           
+
             const meanplus = svgElement.append("text")
                 .attr("x", center)
                 .attr("y", y(mean))
@@ -156,12 +239,38 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                     .enter()
                     .append("circle")
                     .attr("cx", center)
-                    .attr("cy", d => y(d))
+                    .attr("cy", d => y(d.value))  // Usa il valore dell'outlier
                     .attr("r", 3)
                     .style("fill", "none")
-                    .attr("stroke", "white");
+                    .attr("stroke", "white")
+                    .on("mouseover", function(event, d) {
+                        // Evidenzia l'outlier quando fai hover
+                        d3.select(this)
+                            .transition()
+                            .duration(200)
+                            .attr("r", 6)  // Aumenta il raggio per evidenziare l'outlier
+                            .style("fill", "red");
+                
+                        // Evidenzia la provincia corrispondente chiamando setHoveredProvincia
+                        setHoveredProvincia(d.provincia);  // Imposta la provincia corretta
+                
+                        // Se desideri anche evidenziare qualcosa nella mappa o altre visualizzazioni,
+                        // puoi gestire qui eventuali altri cambiamenti
+                    })
+                    .on("mouseout", function(event, d) {
+                        // Ripristina l'aspetto originale dell'outlier
+                        d3.select(this)
+                            .transition()
+                            .duration(200)
+                            .attr("r", 3)  // Ripristina il raggio originale
+                            .style("fill", "none");
+                
+                        // Ripristina la selezione della provincia
+                        setHoveredProvincia(null);  // Resetta la provincia selezionata
+                    });
+
             }
-            if (pollutant == '_pm10'){
+            if (pollutant == '_pm10') {
                 svgElement.append("line")
                     .attr("x1", 0)
                     .attr("x2", width)
@@ -170,7 +279,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                     .attr("stroke", "red")
                     .attr("stroke-dasharray", "5,5");
             }
-            else if (pollutant == '_pm25'){
+            else if (pollutant == '_pm25') {
                 svgElement.append("line")
                     .attr("x1", 0)
                     .attr("x2", width)
@@ -179,7 +288,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                     .attr("stroke", "red")
                     .attr("stroke-dasharray", "5,5");
 
-            }else if (pollutant == '_no2'){
+            } else if (pollutant == '_no2') {
                 svgElement.append("line")
                     .attr("x1", 0)
                     .attr("x2", width)
@@ -187,7 +296,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                     .attr("y2", y(90))
                     .attr("stroke", "red")
                     .attr("stroke-dasharray", "5,5");
-            }else if (pollutant == '_o3'){
+            } else if (pollutant == '_o3') {
                 svgElement.append("line")
                     .attr("x1", 0)
                     .attr("x2", width)
@@ -196,66 +305,72 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                     .attr("stroke", "red")
                     .attr("stroke-dasharray", "5,5");
             }
-            
+
             else {
-                
+
                 console.log("Pollutant not recognized:", pollutant);
-              }
+            }
 
-           
 
-            let tooltipText = `<b>${region}</b> <br>Median: ${median}<br>Mean: ${mean}<br>Min: ${min}<br>Max: ${max}`;
 
-                    if (outliers.length > 0) {
-                    
-                        tooltipText += `<br>Outliers: ${outliers}`;
-                    }
+            let tooltipText = `<b>${group}</b> <br>Median: ${median}<br>Mean: ${mean}<br>Min: ${min}<br>Max: ${max}`;
+            if (outliers.length > 0) {
+                // Itera sugli outliers per costruire il testo del tooltip
+                tooltipText += `<br>Outliers: ${outliers.map(d => ` ${d.value}`).join(', ')}`;
+            }
 
-            box.on("mouseover", function (event) {
+            box.on("mouseover", function (event, d) {
                 d3.select(this)
                     .transition()
                     .duration(200)
                     .attr("stroke", "black")
                     .style("opacity", 1);
-                    
+
                 const { pageX, pageY } = event;
                 tooltip.transition().duration(200).style("opacity", .9);
                 tooltip.html(tooltipText)
                     .style("left", `${pageX}px`)
                     .style("top", `${pageY - 150}px`)
                     .style("text-align", "right");
-                    ;
+                ;
+                setHoveredRegion(d);
+                setHoveredProvincia(d);
+
             })
                 .on("mouseout", function (event) {
                     d3.select(this)
-                    .transition()
-                    .duration(200)
-                    .style("opacity", .7)
-                    .attr("stroke", "white");
+                        .transition()
+                        .duration(200)
+                        .style("opacity", .7)
+                        .attr("stroke", "white");
+
+                    tooltip.transition().duration(500).style("opacity", 0);
+                    setHoveredRegion(null);
+                    setHoveredProvincia(null);
+                })
+                .on("click", function () {
+
+                    setSelectedRegion(group);
+
+                });
+
+            meanplus.on("mouseover", function (event) {
+
+                const { pageX, pageY } = event;
+                tooltip.transition().duration(200).style("opacity", .9);
+                tooltip.html(tooltipText)
+                    .style("left", `${pageX}px`)
+                    .style("top", `${pageY - 150}px`)
+                    .style("text-align", "right");
+                ;
+
+            })
+                .on("mouseout", function (event) {
 
                     tooltip.transition().duration(500).style("opacity", 0);
                 })
-                .on("click", function () {
-                    
-                    setSelectedRegion(region);
-                });
-
-                meanplus.on("mouseover", function (event) {
-                        
-                    const { pageX, pageY } = event;
-                    tooltip.transition().duration(200).style("opacity", .9);
-                    tooltip.html(tooltipText)
-                        .style("left", `${pageX}px`)
-                        .style("top", `${pageY - 150}px`)
-                        .style("text-align", "right");
-                        ;
-                })
-                    .on("mouseout", function (event) {
-        
-                        tooltip.transition().duration(500).style("opacity", 0);
-                    })
         });
-        
+
 
 
 
@@ -294,21 +409,21 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
 
             const size = 15;
 
-            
+
             const legendData = [
-                { label: `Limit`, symbol: "line", strokeDasharray: "5,5", color: "red", fontSize: "9px"},
+                { label: `Limit`, symbol: "line", strokeDasharray: "5,5", color: "red", fontSize: "9px" },
                 { label: "Mean", symbol: "+", color: "white" },
                 { label: "Outliers", symbol: "circle", radius: 3, color: "white", fill: "none" },
                 { label: "Median", symbol: "-", color: "white" },
             ];
 
-            
+
             const legendItems = legendSvg.selectAll("legendItem")
                 .data(legendData)
                 .enter().append("g")
                 .attr("transform", (d, i) => `translate(10, ${30 + i * (size + 10)})`);
 
-           
+
             legendItems.each(function (d) {
                 if (d.symbol === "line") {
                     d3.select(this).append("line")
@@ -335,15 +450,16 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                         .style("stroke", d.color);
                 } else if (d.symbol === "-") {
                     d3.select(this).append("line")
-                    .attr("x1", 0)
-                    .attr("y1", size / 2 + 2.5)
-                    .attr("x2", size)
-                    .attr("y2", size / 2 + 2.5)
-                    .attr("stroke", d.color)}
+                        .attr("x1", 0)
+                        .attr("y1", size / 2 + 2.5)
+                        .attr("x2", size)
+                        .attr("y2", size / 2 + 2.5)
+                        .attr("stroke", d.color)
+                }
 
             });
 
-           
+
             legendItems.append("text")
                 .attr("x", size * 1.3)
                 .attr("y", size / 2)
@@ -354,7 +470,7 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                 .attr("fill", "white")
                 .style("alignment-baseline", "middle");
 
-            
+
             legendSvg.append("text")
                 .attr("x", 10)
                 .attr("y", 15)
@@ -363,22 +479,59 @@ const BoxPlot = ({ selectedRegion, allData, setSelectedRegion, pollutant}) => {
                 .style("font-size", "12px");
         };
 
-        
 
-       
+
+
         createLegend();
 
 
 
 
 
-    }, [selectedRegion, allData, setSelectedRegion, pollutant]);
+
+    }, [selectedRegion, allData, setSelectedRegion, pollutant, selectedProvinces, groupData]);
+
+    useEffect(() => {
+        const svg = d3.select(svgRef.current);
+        svg.selectAll("circle.hover-circle").remove();  // Rimuove eventuali cerchi esistenti
+
+        if (hoverProvincia && groupData) {
+            let foundProvincia = null;
+            let regione = null;
+
+            // Cerca in ogni gruppo (regione) se contiene la provincia specifica
+            groupData.forEach((group, key) => {
+                const provincia = group.provinceData.find(p => p.provincia === hoverProvincia);
+                if (provincia) {
+                    foundProvincia = provincia;
+                    regione = key;  // Salva la regione corrispondente
+                }
+            });
+
+            if (foundProvincia && regione) {
+                const { mean } = foundProvincia;  // Prendi il valore medio della provincia
+                const center = xScaleRef.current(regione)  // Posiziona il cerchio sulla regione
+
+                svg.append("circle")
+                    .attr("class", "hover-circle")
+                    .attr("cx", center + 50)  // Posiziona sulla linea della regione corretta
+                    .attr("cy", yScaleRef.current(mean)) // Posiziona il cerchio in base alla media della provincia
+                    .attr("r", 5)  // Maggiore del raggio degli outliers
+                    .style("fill", "red")
+                    .style("stroke", "white")
+                    .style("stroke-width", 1)
+                    .style("opacity", 0.9);
+            }
+        }
+    }, [hoverProvincia, groupData]);
+
+
 
     return (
-        <div style={{ display:'flex', width: "640px", height: "350px", overflow: 'hidden', position: 'relative', top: 0, left: 0}}>
+        <div style={{ display: 'flex', width: "640px", height: "350px", overflow: 'hidden', position: 'relative', top: 0, left: 0 }}>
             <svg ref={svgRef}></svg>
             <div ref={tooltipRef} style={{ opacity: 0 }}></div>
-            <svg ref={legendRef}style={{ position: 'absolute', bottom: '10px' }} ></svg>
+            <svg ref={legendRef} style={{ position: 'absolute', bottom: '10px' }} ></svg>
         </div>
     );
 };

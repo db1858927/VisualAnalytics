@@ -68,17 +68,13 @@ function App() {
   };
 
   const handleProvinceHover = (province) => {
-    setSelectedProvince(province);
+    setHoveredProvincia(province);
   };
 
   const handleProvinceLeave = () => {
-    setSelectedProvince(null);
+    setHoveredProvincia(null);
   };
 
-  const handleSelection = (provinces) => {
-    console.log("Province selezionate: ", provinces);
-    setSelectedProvinces(provinces);
-  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -159,13 +155,13 @@ function App() {
             <Grid item xs={4}>
               <Item className="Item">
                 Map
-                <Map setHoveredProvincia={setHoveredProvincia} setHoveredRegion={setHoveredRegion} selectedProvinces={selectedProvinces} selectedProvince={selectedProvince} selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} pollutant={pollutant} year={years} />
+                <Map hoveredRegion={hoveredRegion} setHoveredProvincia={setHoveredProvincia} setHoveredRegion={setHoveredRegion} selectedProvinces={selectedProvinces}  hoverProvincia={hoverProvincia} selectedRegion={selectedRegion} setSelectedRegion={setSelectedRegion} pollutant={pollutant} year={years} />
               </Item>
             </Grid>
             <Grid item xs={5.7}>
               <Item className="Item">
                 BoxPlot
-                <BoxPlot selectedRegion={selectedRegion} allData={allData} setSelectedRegion={setSelectedRegion} pollutant={pollutant} year={years} />
+                <BoxPlot hoverProvincia={hoverProvincia} hoveredRegion={hoveredRegion} setHoveredProvincia={setHoveredProvincia} setHoveredRegion={setHoveredRegion} selectedProvinces={selectedProvinces} selectedRegion={selectedRegion} allData={allData} setSelectedRegion={setSelectedRegion} pollutant={pollutant} year={years} />
               </Item>
             </Grid>
             <Grid item xs={7}>
@@ -175,7 +171,7 @@ function App() {
             </Grid>
             <Grid item xs={5}>
               <Item className="Item">ScatterPlot
-                <ScatterPlot year={years} hoverProvincia={hoverProvincia} hoveredRegion={hoveredRegion} onProvinceHover={handleProvinceHover} onProvinceLeave={handleProvinceLeave} onProvincesSelect={setSelectedProvinces} selectedProvinces={selectedProvinces} />
+                <ScatterPlot year={years} pollutant={pollutant} hoverProvincia={hoverProvincia} hoveredRegion={hoveredRegion} setHoveredProvincia={setHoveredProvincia} onProvincesSelect={setSelectedProvinces} selectedProvinces={selectedProvinces} />
               </Item>
             </Grid>
           </Grid>
