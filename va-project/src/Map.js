@@ -81,38 +81,43 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
     const tooltip = d3.select(tooltipRef.current);
     console.log(provinciaMeansState[hoverProvincia])
 
-    if (hoverProvincia && provinciaMeansState[hoverProvincia]) {
+    if (hoverProvincia && provinciaMeansState[hoverProvincia] && !selectedRegion && (!selectedProvinces || selectedProvinces.length === 0) ) {
       const containerRect = svgRef.current.getBoundingClientRect();
       const provinciaData = provinciaMeansState[getMappedProvinceName(hoverProvincia)];
 
 
       console.log(provinciaData)
 
-      var pm10Mean = 0;
-      var pm25Mean = 0;
-      var no2Mean = 0;
-      var o3Mean = 0;
-      var category = ''
-      var poll = ''
+     
 
 
-      if (pollutant == '_pm10') { pm10Mean = provinciaData ? provinciaData : 'N/A'; }
-      if (pollutant == '_pm25') { pm25Mean = provinciaData ? provinciaData : 'N/A'; }
-      if (pollutant == '_no2') { no2Mean = provinciaData ? provinciaData : 'N/A'; }
-      if (pollutant == '_o3') { o3Mean = provinciaData ? provinciaData : 'N/A'; }
-      if (pollutant == '_total') {
-        category = provinciaData.category
-        poll = provinciaData.pollutant
+      // Variabili per i dati medi
+      var meanValue = 'N/A';
+      var category = '', poll = '';
+
+      // Determina quale inquinante visualizzare nel tooltip
+      if (pollutant === '_pm10') {
+        meanValue = provinciaData ? provinciaData : 'N/A';
+      } else if (pollutant === '_pm25') {
+        meanValue = provinciaData ? provinciaData : 'N/A';
+      } else if (pollutant === '_no2') {
+        meanValue = provinciaData ? provinciaData : 'N/A';
+      } else if (pollutant === '_o3') {
+        meanValue = provinciaData ? provinciaData : 'N/A';
+      } else if (pollutant === '_total') {
+        category = provinciaData.category || 'N/A';
+        poll = provinciaData.pollutant || 'Unknown';
       }
+
 
       tooltip
         .html(`
-    <b>Provincia: ${hoverProvincia}</b><br>
-    ${pollutant !== '_total'
-            ? `Mean ${pollutant.replace('_', '')}: ${pm10Mean}<br>`
+          <b>Provincia: ${hoverProvincia}</b><br>
+          ${pollutant !== '_total'
+            ? `Mean ${pollutant.replace('_', '').toUpperCase()}: ${meanValue} µg/m³<br>`
             : `Category: ${category}<br>Due to: ${poll}<br>`}
-    Year: ${year}
-  `)
+          Year: ${year}
+        `)
         .style("left", `${containerRect.left - 10}px`)
         .style("top", `${containerRect.top - 400}px`)
         .style("opacity", 1);
