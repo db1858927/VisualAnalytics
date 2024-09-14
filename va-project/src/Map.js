@@ -9,81 +9,158 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
   const provinciaDataRef = useRef();
   const [hasClickedRegion, setHasClickedRegion] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false); // Stato per verificare se i dati sono caricati
+  const [provinciaMeansState, setProvinciaMeansState] = useState({});
   // 
+
+  const provinceNameMapping = {
+    "Massa-Carrara": "Massa Carrara",
+    "Forlì-Cesena": "Forli'-Cesena"
+  }
+
+  const getMappedProvinceName = (provincia) => provinceNameMapping[provincia] || provincia;
 
   const updateBorders = () => {
     const svg = d3.select(svgRef.current);
+    
+
     svg.selectAll("path.province-border")
-      .style("stroke-width", d => {
-        if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
-          return "2px";
+    
+      .style("stroke", d => {
+        if (selectedProvinces && selectedProvinces.includes(getMappedProvinceName(d.properties.prov_name))) {
+          return "red";
         }
-        if (hoverProvincia && hoverProvincia.includes(d.properties.prov_name)) {
-          return "2px";
+        if (hoverProvincia && hoverProvincia.includes(getMappedProvinceName(d.properties.prov_name))) {
+          return "red";
+        }
+        return "black"; // Default stroke width
+      })
+      .style("stroke-width", d => {
+        if (selectedProvinces && selectedProvinces.includes(getMappedProvinceName(d.properties.prov_name))) {
+          return "0.8px";
+        }
+        if (hoverProvincia && hoverProvincia.includes(getMappedProvinceName(d.properties.prov_name))) {
+          return "0.8px";
         }
         return "0.2px"; // Default stroke width
       })
       .style("opacity", d => {
-        if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
+        if (selectedProvinces && selectedProvinces.includes(getMappedProvinceName(d.properties.prov_name))) {
           return 1;
         }
-        if (hoverProvincia && hoverProvincia.includes(d.properties.prov_name)) {
+        if (hoverProvincia && hoverProvincia.includes(getMappedProvinceName(d.properties.prov_name))) {
           return 1;
         }
         return 0.7; // Default opacity
       });
-      svg.selectAll("path.provincia")
+    svg.selectAll("path.provincia")
       .style("stroke-width", d => {
-        if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
-          return "2px";
+        if (selectedProvinces && selectedProvinces.includes(getMappedProvinceName(d.properties.prov_name))) {
+          return "0.8px";
         }
-        if (hoverProvincia && hoverProvincia.includes(d.properties.prov_name)) {
-          return "2px";
+        if (hoverProvincia && hoverProvincia.includes(getMappedProvinceName(d.properties.prov_name))) {
+          return "0.8px";
         }
         return "0.2px"; // Default stroke width
       })
       .style("opacity", d => {
-        if (selectedProvinces && selectedProvinces.includes(d.properties.prov_name)) {
+        if (selectedProvinces && selectedProvinces.includes(getMappedProvinceName(d.properties.prov_name))) {
           return 1;
         }
-        if (hoverProvincia && hoverProvincia.includes(d.properties.prov_name)) {
+        if (hoverProvincia && hoverProvincia.includes(getMappedProvinceName(d.properties.prov_name))) {
           return 1;
         }
         return 0.7; // Default opacity
       });
 
-      
+
+
+
   };
 
   useEffect(() => {
-    if (hoveredRegion ) {
+    const tooltip = d3.select(tooltipRef.current);
+    console.log(provinciaMeansState[hoverProvincia])
+
+    if (hoverProvincia && provinciaMeansState[hoverProvincia]) {
+      const containerRect = svgRef.current.getBoundingClientRect();
+      const provinciaData = provinciaMeansState[getMappedProvinceName(hoverProvincia)];
+
+
+      console.log(provinciaData)
+
+      var pm10Mean = 0;
+      var pm25Mean = 0;
+      var no2Mean = 0;
+      var o3Mean = 0;
+      var category = ''
+      var poll = ''
+
+
+      if (pollutant == '_pm10') { pm10Mean = provinciaData ? provinciaData : 'N/A'; }
+      if (pollutant == '_pm25') { pm25Mean = provinciaData ? provinciaData : 'N/A'; }
+      if (pollutant == '_no2') { no2Mean = provinciaData ? provinciaData : 'N/A'; }
+      if (pollutant == '_o3') { o3Mean = provinciaData ? provinciaData : 'N/A'; }
+      if (pollutant == '_total') {
+        category = provinciaData.category
+        poll = provinciaData.pollutant
+      }
+
+      tooltip
+        .html(`
+    <b>Provincia: ${hoverProvincia}</b><br>
+    ${pollutant !== '_total'
+            ? `Mean ${pollutant.replace('_', '')}: ${pm10Mean}<br>`
+            : `Category: ${category}<br>Due to: ${poll}<br>`}
+    Year: ${year}
+  `)
+        .style("left", `${containerRect.left - 10}px`)
+        .style("top", `${containerRect.top - 400}px`)
+        .style("opacity", 1);
+
+
+    } else {
+      // Nascondi il tooltip quando non c'è hoverProvincia
+      tooltip.style("opacity", 0);
+    }
+  }, [hoverProvincia, provinciaMeansState, year]);
+
+
+
+  useEffect(() => {
+    if (hoveredRegion) {
       // Se c'è una regione o provincia selezionata, aggiorna il bordo
       const svg = d3.select(svgRef.current);
-  
+
       svg.selectAll("path.regione")
+        .style("stroke", d => {
+          return hoveredRegion === d.properties.name ? "red" : "black";
+        })
         .style("stroke-width", d => {
           return hoveredRegion === d.properties.name ? "2px" : "0.8px";
         })
+
         .style("opacity", d => {
           return hoveredRegion === d.properties.name ? 1 : 0.7;
         });
-  
-     
-  
+
+
+
     } else {
       // Se nessuna regione o provincia è selezionata, ripristina i bordi
       const svg = d3.select(svgRef.current);
-  
+
       svg.selectAll("path.regione")
+        .style("stroke", "black")
         .style("stroke-width", "0.8px")
         .style("opacity", 0.7);
-  
+
       svg.selectAll("path.provincia")
+        .style("stroke", "black")
         .style("stroke-width", "0.2px")
         .style("opacity", 0.7);
     }
   }, [hoveredRegion]);
-  
+
 
   useEffect(() => {
 
@@ -146,7 +223,7 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
       }
     };
 
-    
+
 
     const loadCSV = async () => {
       try {
@@ -376,7 +453,9 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
 
 
         }
-        console.log(regionData)
+
+
+        setProvinciaMeansState(provinciaMeans);
         provinciaDataRef.current = await d3.json("./limits_IT_provinces.geojson");
 
         initialFeaturesRef.current = topo.features;
@@ -403,7 +482,7 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
       d3.select(this)
         .transition()
         .duration(200)
-        .style("stroke", "black")
+        .style("stroke", "red")
         .style("stroke-width", "0.8px")
         .style("opacity", 1)
 
@@ -414,8 +493,8 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
         .style("opacity", .9)
         .style("font-size", "12px")
         .style("text-align", "right");
-        
-        
+
+
 
       if (pollutant === '_total') {
 
@@ -428,7 +507,7 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
     <br> ${regionMeans[d.properties.name] && regionMeans[d.properties.name].category !== undefined ? regionMeans[d.properties.name] && 'due to:' + regionMeans[d.properties.name].pollutant : 'undefined'}
     <br>Year: ${year}`)
 
-    
+
 
       }
       else {
@@ -438,7 +517,7 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
 
 
       }
-      setHoveredRegion(d.properties.name); 
+      setHoveredRegion(d.properties.name);
 
     };
 
@@ -455,7 +534,7 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
         .duration(500)
         .style("opacity", 0);
 
-        setHoveredRegion(null);
+      setHoveredRegion(null);
     };
 
     const mouseOverprovincia = function (event, d) {
@@ -465,7 +544,8 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
         .transition()
         .duration(200)
         .style("opacity", 1)
-        .style("stroke", "none");
+        .style("stroke", "red")
+        .style("stroke-width", "0.5px");
 
       tooltip.transition()
         .duration(200)
@@ -475,25 +555,25 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
         .style("font-size", "12px")
         .style("text-align", "right");
       if (pollutant === '_total') {
-        tooltip.html(`Provincia: <b>${d.properties.prov_name}</b> ${provinciaData[d.properties.prov_name] && d3.mean(provinciaData[d.properties.prov_name].PM10) !== undefined ? '<br>Means of pm10: ' + d3.mean(provinciaData[d.properties.prov_name].PM10).toFixed(2) : ''}
-    ${provinciaData[d.properties.prov_name] && d3.mean(provinciaData[d.properties.prov_name].PM25) !== undefined ? '<br>Means of pm2.5: ' + d3.mean(provinciaData[d.properties.prov_name].PM25).toFixed(2) : ''}
-    ${provinciaData[d.properties.prov_name] && d3.mean(provinciaData[d.properties.prov_name].NO2) !== undefined ? '<br> Means of no2: ' + d3.mean(provinciaData[d.properties.prov_name].NO2).toFixed(2) : ''}
-     ${provinciaData[d.properties.prov_name] && d3.mean(provinciaData[d.properties.prov_name].O3) !== undefined ? '<br>Means of o3: ' + d3.mean(provinciaData[d.properties.prov_name].O3).toFixed(2) : ''}
-     ${provinciaMeans[d.properties.prov_name] && provinciaMeans[d.properties.prov_name] !== undefined ? '<br>' + provinciaMeans[d.properties.prov_name].category : ''}  ${provinciaMeans[d.properties.prov_name] && provinciaMeans[d.properties.prov_name] !== undefined ? 'due to:' + provinciaMeans[d.properties.prov_name].pollutant : ''}
+        tooltip.html(`Provincia: <b>${getMappedProvinceName(d.properties.prov_name)}</b> ${provinciaData[getMappedProvinceName(d.properties.prov_name)] && d3.mean(provinciaData[getMappedProvinceName(d.properties.prov_name)].PM10) !== undefined ? '<br>Means of pm10: ' + d3.mean(provinciaData[getMappedProvinceName(d.properties.prov_name)].PM10).toFixed(2) : ''}
+    ${provinciaData[getMappedProvinceName(d.properties.prov_name)] && d3.mean(provinciaData[getMappedProvinceName(d.properties.prov_name)].PM25) !== undefined ? '<br>Means of pm2.5: ' + d3.mean(provinciaData[getMappedProvinceName(d.properties.prov_name)].PM25).toFixed(2) : ''}
+    ${provinciaData[getMappedProvinceName(d.properties.prov_name)] && d3.mean(provinciaData[getMappedProvinceName(d.properties.prov_name)].NO2) !== undefined ? '<br> Means of no2: ' + d3.mean(provinciaData[getMappedProvinceName(d.properties.prov_name)].NO2).toFixed(2) : ''}
+     ${provinciaData[getMappedProvinceName(d.properties.prov_name)] && d3.mean(provinciaData[getMappedProvinceName(d.properties.prov_name)].O3) !== undefined ? '<br>Means of o3: ' + d3.mean(provinciaData[getMappedProvinceName(d.properties.prov_name)].O3).toFixed(2) : ''}
+     ${provinciaMeans[getMappedProvinceName(d.properties.prov_name)] && provinciaMeans[getMappedProvinceName(d.properties.prov_name)] !== undefined ? '<br>' + provinciaMeans[getMappedProvinceName(d.properties.prov_name)].category : ''}  ${provinciaMeans[getMappedProvinceName(d.properties.prov_name)] && provinciaMeans[getMappedProvinceName(d.properties.prov_name)] !== undefined ? 'due to:' + provinciaMeans[getMappedProvinceName(d.properties.prov_name)].pollutant : ''}
     <br>Year: ${year}`)
 
-    
+
 
       }
       else {
 
-        tooltip.html(`Provincia: <b>${d.properties.prov_name}</b><br>Mean: ${provinciaMeans[d.properties.prov_name]}<br>Year: ${year}`)
+        tooltip.html(`Provincia: <b>${getMappedProvinceName(d.properties.prov_name)}</b><br>Mean: ${provinciaMeans[getMappedProvinceName(d.properties.prov_name)]}<br>Year: ${year}`)
 
 
 
       }
-      setHoveredProvincia(d.properties.prov_name); 
-      
+      setHoveredProvincia(getMappedProvinceName(getMappedProvinceName(d.properties.prov_name)));
+
 
     };
 
@@ -508,9 +588,9 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
         .duration(500)
         .style("opacity", 0);
 
-        setHoveredProvincia(null);
+      setHoveredProvincia(null);
 
-        
+
     };
 
     const zoom = d3.zoom()
@@ -521,7 +601,7 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
       });
 
 
-      
+
 
     const updateMap = (features, isProvincia = true, reset = false) => {
       // Rimuovi tutti i path esistenti
@@ -545,10 +625,12 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
           .attr("d", path.projection(projection))
           .style("fill", d => {
             if (pollutant === '_total') {
-              const meanValue = provinciaMeans[d.properties.prov_name];
+              const meanValue = provinciaMeans[getMappedProvinceName(getMappedProvinceName(d.properties.prov_name))];
+
               return meanValue !== undefined ? colorScale(meanValue.category) : "white";
             } else {
-              const meanValue = provinciaMeans[d.properties.prov_name];
+              const meanValue = provinciaMeans[getMappedProvinceName(getMappedProvinceName(d.properties.prov_name))];
+
               return meanValue !== undefined ? colorScale(meanValue) : "white";
             }
           })
@@ -557,8 +639,8 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
           .on("mouseleave", isProvincia ? mouseLeaveprovincia : mouseLeaveRegion)
           .on("click", isProvincia ? null : clickRegion);
 
-          updateBorders();
-          
+        updateBorders();
+
       }
       else {
 
@@ -571,10 +653,11 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
           .attr("d", path.projection(projection))
           .style("fill", d => {
             if (pollutant === '_total') {
-              const meanValue = isProvincia ? provinciaMeans[d.properties.prov_name] : regionMeans[d.properties.name];
+
+              const meanValue = isProvincia ? provinciaMeans[getMappedProvinceName(getMappedProvinceName(d.properties.prov_name))] : regionMeans[d.properties.name];
               return meanValue !== undefined ? colorScale(meanValue.category) : "white";
             } else {
-              const meanValue = isProvincia ? provinciaMeans[d.properties.prov_name] : regionMeans[d.properties.name];
+              const meanValue = isProvincia ? provinciaMeans[getMappedProvinceName(getMappedProvinceName(d.properties.prov_name))] : regionMeans[d.properties.name];
               return meanValue !== undefined ? colorScale(meanValue) : "white";
             }
           })
@@ -585,17 +668,17 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
           .on("mouseleave", isProvincia ? mouseLeaveprovincia : mouseLeaveRegion)
           .on("click", isProvincia ? null : clickRegion);
 
-          updateBorders();
+        updateBorders();
 
-          svg.selectAll("path.province-border")
+        svg.selectAll("path.province-border")
           .data(provinciaDataRef.current.features)
           .enter().append("path")
           .attr("class", "province-border")
           .attr("d", path.projection(projection))
           .style("fill", "none")
           .style("stroke", "black")
-          .style("stroke-width", "0.1px") 
-        
+          .style("stroke-width", "0.1px")
+
 
 
       }
@@ -642,10 +725,13 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
       "Aosta": "Valle d'Aosta/Vall\u00e9e d'Aoste"
     };
 
+    
+
     const clickRegion = function (event, d) {
       const region = regionNameMapping[d.properties.name] || d.properties.name;
+      console.log(region)
       setSelectedRegion(region);
-      
+
     };
 
     const resetZoom = () => {

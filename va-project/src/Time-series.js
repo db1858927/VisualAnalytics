@@ -110,7 +110,14 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
                 
                 const allData = datasets.flat();
 
+                const regionNameMapping = {
+                    "Valle d'Aosta/Vallée d'Aoste": "Valle d'Aosta",
+                    "Trentino-Alto Adige/Südtirol": "Trentino-Alto Adige",
+                    "Friuli-Venezia Giulia": "Friuli Venezia Giulia"
+                };
+
                 const filteredData = allData.filter(d => {
+                    selectedRegion = regionNameMapping[selectedRegion] || selectedRegion
                     return selectedRegion
                         ? d.region === selectedRegion
                         : selectedRegion

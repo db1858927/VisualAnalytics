@@ -174,8 +174,8 @@ const ScatterPlot = ({ year, pollutant, setHoveredProvincia, onProvincesSelect, 
     svg.selectAll("circle")
       .data(data)
       .attr("r", d => selectedProvinces.includes(d['Provincia']) ? 7 : 5)
-      .style("stroke", d => selectedProvinces.includes(d['Provincia']) ? "lightgray" : "none")
-      .style("stroke-width", d => selectedProvinces.includes(d['Provincia']) ? "2px" : "0px")
+      .style("stroke", d => selectedProvinces.includes(d['Provincia']) ? "red" : "none")
+      .style("stroke-width", d => selectedProvinces.includes(d['Provincia']) ? "0.8px" : "0px")
       .style("opacity", d => selectedProvinces.includes(d['Provincia']) ? 1 : 0.8);
   }, [selectedProvinces, data]);
   
@@ -284,8 +284,8 @@ const ScatterPlot = ({ year, pollutant, setHoveredProvincia, onProvincesSelect, 
 
       })
       .style("opacity", d => selectedProvinces.includes(d['Provincia']) ? 1 : 0.8)
-      .style("stroke", d => selectedProvinces.includes(d['Provincia']) ? "lightgray" : "none")
-      .style("stroke-width", d => selectedProvinces.includes(d['Provincia']) ? "2px" : "0px")
+      .style("stroke", d => selectedProvinces.includes(d['Provincia']) ? "red" : "none")
+      .style("stroke-width", d => selectedProvinces.includes(d['Provincia']) ? "0.8" : "0px")
       .on("mouseout", function (event, d) {
         // Se la provincia non è selezionata, riportala allo stato normale
         if (!selectedProvinces.includes(d['Provincia'])) {
@@ -312,8 +312,8 @@ const ScatterPlot = ({ year, pollutant, setHoveredProvincia, onProvincesSelect, 
           d3.select(this)
             .transition()
             .attr("r", 7)  // Ingrandisci il cerchio
-            .style("stroke", "lightgray")  // Aggiungi il bordo
-            .style("stroke-width", "2px");
+            .style("stroke", "red")  // Aggiungi il bordo
+            .style("stroke-width", "0.8px");
       
           // Mostra l'etichetta solo se il cerchio non è selezionato
           labels.filter(label => label['Provincia'] === d['Provincia'])
@@ -483,10 +483,10 @@ const ScatterPlot = ({ year, pollutant, setHoveredProvincia, onProvincesSelect, 
 
 
   const labelStyle = {
-    padding: '2px',
+    padding: '0px',
     borderRadius: '0px',
     display: 'block',  // Questo assicura che ogni label sia su una riga separata
-    marginBottom: '0px', // Spazio tra i label
+    marginBottom: '-5px', // Spazio tra i label
     cursor: 'pointer',
   };
 
@@ -527,14 +527,14 @@ const ScatterPlot = ({ year, pollutant, setHoveredProvincia, onProvincesSelect, 
       .style("stroke", d => {
         // Bordo per i punti corrispondenti alla regione o provincia
         if (d.Provincia === hoverProvincia || provinceToRegionMap[d.Provincia] === hoveredRegion) {
-          return "#d3d3d3"; // Colore del bordo per quelli selezionati
+          return "red"; // Colore del bordo per quelli selezionati
         }
         return "none"; // Nessun bordo altrimenti
       })
       .style("stroke-width", d => {
         // Spessore del bordo per i punti corrispondenti
         if (d.Provincia === hoverProvincia || provinceToRegionMap[d.Provincia] === hoveredRegion) {
-          return "2px";
+          return "0.8px";
         }
         return "0px"; // Nessun bordo per gli altri
       });
