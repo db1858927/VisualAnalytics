@@ -239,6 +239,31 @@ const ScatterPlot = ({ year, pollutant, setHoveredProvincia, onProvincesSelect, 
         .attr("transform", `translate(${margin.left},${margin.top})`)
         .call(d3.axisLeft(y));
 
+        function calculateWorstPollutant(no2, o3, pm10, pm25) {
+          // Limiti standard europei per gli inquinanti
+          const limits = {
+            no2: 40,   // µg/m³
+            o3: 120,   // µg/m³
+            pm10: 40,  // µg/m³
+            pm25: 25   // µg/m³
+          };
+        
+          // Calcola la percentuale di superamento rispetto al limite
+          const pollutantRatios = {
+            no2: no2 / limits.no2,
+            o3: o3 / limits.o3,
+            pm10: pm10 / limits.pm10,
+            pm25: pm25 / limits.pm25
+          };
+        
+          // Trova l'inquinante con la percentuale di superamento maggiore
+          const worstPollutant = Object.keys(pollutantRatios).reduce((a, b) =>
+            pollutantRatios[a] > pollutantRatios[b] ? a : b
+          );
+        
+          return worstPollutant
+        }
+
 
 
       const circles = plotArea.selectAll("circle")
@@ -271,6 +296,34 @@ const ScatterPlot = ({ year, pollutant, setHoveredProvincia, onProvincesSelect, 
             if (d.o3 <= 130 && d.o3 > 50 && showMid) return "#8AC3EF"; // Livelli medi di PM10
             if (d.o3 <= 50 && showLow) return "#65BB6F"; // Livelli bassi di PM10
             return "white"; // Non mostrare se non selezionato
+          }
+          else{
+            const wpoll = calculateWorstPollutant(d.no2,d.o3,d.pm10,d.pm25)
+            if (wpoll == '_pm10') {
+              if (d.pm10 > 50 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+              if (d.pm10 <= 50 && d.pm10 > 20 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+              if (d.pm10 <= 20 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+              return "white"; // Non mostrare se non selezionato
+            }
+            else if (wpoll == '_pm25') {
+              if (d.pm25 > 25 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+              if (d.pm25 <= 25 && d.pm25 > 10 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+              if (d.pm25 <= 10 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+              return "white"; // Non mostrare se non selezionato
+            }
+            else if (wpoll == '_no2') {
+              if (d.no2 > 120 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+              if (d.no2 <= 120 && d.no2 > 90 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+              if (d.no2 <= 90 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+              return "white"; // Non mostrare se non selezionato
+            }
+            else if (wpoll == '_o3') {
+              if (d.o3 > 130 && showHigh) return "#9C29AD"; // Livelli alti di PM10
+              if (d.o3 <= 130 && d.o3 > 50 && showMid) return "#8AC3EF"; // Livelli medi di PM10
+              if (d.o3 <= 50 && showLow) return "#65BB6F"; // Livelli bassi di PM10
+              return "white"; // Non mostrare se non selezionato
+            }
+           
           }
 
         })
@@ -374,107 +427,7 @@ const ScatterPlot = ({ year, pollutant, setHoveredProvincia, onProvincesSelect, 
 
   svgElement.call(zoom);
 
-  const legendSvg = d3.select(legendRef.current);
-
-
-  legendSvg.selectAll("*").remove();
-  const legendWidth = 150;
-  const legendHeight = 80;
-
-  legendSvg
-    .attr("width", legendWidth)
-    .attr("height", legendHeight)
-    .style("position", "absolute")
-    .style("bottom", "260px")
-    .style("right", "40px")
-    .style("padding", "5px")
-    .style("border-radius", "5px")
-    .style("box-shadow", "0 0 10px rgba(0,0,0,0.2)");
-
-  const size = 10;
-
-  legendSvg.selectAll("mydots")
-    .data(clusters)
-    .enter()
-    .append("circle")
-    .attr("cx", 10 + size / 2)
-    .attr("cy", (d, i) => 10 + (i + 1) * (size + 5) + size / 2)
-    .attr("r", size / 2)
-    .style("fill", d => colorScale(d));
-
-  legendSvg.selectAll("mylabels")
-    .data(clusters)
-    .enter()
-    .append("text")
-    .attr("x", 10 + size * 1.2)
-    .attr("y", (d, i) => 10 + (i + 1) * (size + 5) + (size / 2))
-    .style("fill", d => colorScale(d))
-    .text(function (d) {
-
-      if (year === '2010') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Low level of pm2.5";
-        if (d == 2) return "Mid level of pm2.5";
-      } if (year === '2011') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Low level of pm2.5";
-        if (d == 2) return "Mid level of pm2.5";
-      } if (year === '2012') {
-        if (d == 1) return "Low level of pm2.5";
-        if (d == 0) return "Mid level of pm2.5";
-        if (d == 2) return "High level of pm2.5";
-      } if (year === '2013') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Mid level of pm2.5";
-        if (d == 2) return "Low level of pm2.5";
-      } if (year === '2014') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Low level of pm2.5";
-        if (d == 2) return "Mid level of pm2.5";
-      } if (year === '2015') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Low level of pm2.5";
-        if (d == 2) return "Mid level of pm2.5";
-      } if (year === '2016') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Low level of pm2.5";
-        if (d == 2) return "Mid level of pm2.5";
-      } if (year === '2017') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Low level of pm2.5";
-        if (d == 2) return "Mid level of pm2.5";
-      } if (year === '2018') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Low level of pm2.5";
-        if (d == 2) return "Mid level of pm2.5";
-      } if (year === '2019') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Low level of pm2.5";
-        if (d == 2) return "Mid level of pm2.5";
-      } if (year === '2012') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Low level of pm2.5";
-        if (d == 2) return "Mid level of pm2.5";
-      } if (year === '2021') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Low level of pm2.5";
-        if (d == 2) return "Mid level of pm2.5";
-      } if (year === '2022') {
-        if (d == 1) return "High level of pm2.5";
-        if (d == 0) return "Low level of pm2.5";
-        if (d == 2) return "Mid level of pm2.5";
-      }
-    })
-    .attr("text-anchor", "left")
-    .style("alignment-baseline", "middle")
-    .style("font-size", "10px");;
-
-  legendSvg.append("text")
-    .attr("x", 10)
-    .attr("y", 15)
-    .text('Clusters')
-    .attr("fill", "white")
-    .style("font-size", "12px");
+  
 
 };
 
@@ -588,7 +541,7 @@ useEffect(() => {
 return (
   <div style={{ display: 'flex' }}>
     <svg ref={svgRef} style={{ height: '350px', width: '400px', overflow: 'visible' }}></svg>
-    {/* <svg ref={legendRef} style={{ position: 'absolute', bottom: '20px' }}></svg> */}
+   
 
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
       <label style={labelStyle}>
