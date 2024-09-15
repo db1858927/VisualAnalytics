@@ -36,10 +36,10 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
       })
       .style("stroke-width", d => {
         if (selectedProvinces && selectedProvinces.includes(getMappedProvinceName(d.properties.prov_name))) {
-          return "0.8px";
+          return "0.5px";
         }
         if (hoverProvincia && hoverProvincia.includes(getMappedProvinceName(d.properties.prov_name))) {
-          return "0.8px";
+          return "1px";
         }
         return "0.2px"; // Default stroke width
       })
@@ -55,12 +55,12 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
     svg.selectAll("path.provincia")
       .style("stroke-width", d => {
         if (selectedProvinces && selectedProvinces.includes(getMappedProvinceName(d.properties.prov_name))) {
-          return "0.8px";
+          return "0.5px";
         }
         if (hoverProvincia && hoverProvincia.includes(getMappedProvinceName(d.properties.prov_name))) {
-          return "0.8px";
+          return "1px";
         }
-        return "0.2px"; // Default stroke width
+        return "0.3px"; // Default stroke width
       })
       .style("opacity", d => {
         if (selectedProvinces && selectedProvinces.includes(getMappedProvinceName(d.properties.prov_name))) {
@@ -550,7 +550,7 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
         .duration(200)
         .style("opacity", 1)
         .style("stroke", "red")
-        .style("stroke-width", "0.5px");
+        .style("stroke-width", "0.3px");
 
       tooltip.transition()
         .duration(200)
@@ -587,7 +587,8 @@ const Map = ({ hoveredRegion, selectedRegion, setSelectedRegion, pollutant, year
         .transition()
         .duration(200)
         .style("opacity", .7)
-        .style("stroke", "none");
+        .style("stroke", "black")
+        .style("stroke-width", "0.3px");
 
       tooltip.transition()
         .duration(500)

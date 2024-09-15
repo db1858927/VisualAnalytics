@@ -398,8 +398,8 @@ const BoxPlot = ({ hoverProvincia, hoveredRegion, selectedRegion, allData, setSe
                 .attr("width", legendWidth)
                 .attr("height", legendHeight)
                 .style("position", "absolute")
-                .style("bottom", "20px") // Cambia la posizione della legenda
-                .style("left", `${width + margin.left + 10}px`) // Posiziona la legenda accanto al grafico
+                .style("bottom", "25px") // Cambia la posizione della legenda
+                .style("left", `${width + margin.left + 35}px`) // Posiziona la legenda accanto al grafico
                 .style("padding", "5px")
                 .style("border-radius", "5px")
                 .style("box-shadow", "0 0 10px rgba(0,0,0,0.2)");
@@ -408,7 +408,7 @@ const BoxPlot = ({ hoverProvincia, hoveredRegion, selectedRegion, allData, setSe
 
 
             const legendData = [
-                { label: `Limit`, symbol: "line", strokeDasharray: "5,5", color: "red", fontSize: "9px" },
+                { label: `EU Limit`, symbol: "line", strokeDasharray: "5,5", color: "red", fontSize: "9px" },
                 { label: "Mean", symbol: "+", color: "white" },
                 { label: "Outliers", symbol: "circle", radius: 3, color: "white", fill: "none" },
                 { label: "Median", symbol: "-", color: "white" },
