@@ -3,66 +3,49 @@ import numpy as np
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
 import seaborn as sns
+from sklearn import preprocessing
 
-# Dataset - cambia per ogni anno
+# Dataset
 df = pd.read_csv('years_total/dati_2010.csv')
 
-# Seleziona le colonne per la t-SNE (escludendo eventuali colonne non numeriche)
-features = ['no2', 'pm10', 'pm25', 'o3']
-region_means = df.groupby('Provincia')[features].mean().reset_index()
-region_means = region_means.dropna().reset_index(drop=True)
 
+selected_columns = ['no2', 'pm10', 'pm25', 'o3']
 
+# Group by 'Provincia' 
+data_numeric = df.groupby('Provincia')[selected_columns].mean().reset_index()
+data_numeric = data_numeric.dropna().reset_index(drop=True)
+provinces = data_numeric['Provincia']
+data_numeric_values = data_numeric[selected_columns].values
 
-
-# Standardizzazione dei dati
+# Standardization 
 scaler = StandardScaler()
-df_scaled = scaler.fit_transform(region_means[features]) #media=0 dev.std.=1
+data_scaled = scaler.fit_transform(data_numeric_values)
+
+# Apply t-SNE
+tsne_results = TSNE(perplexity=5).fit_transform(data_scaled)
+
+# t-SNE results
+df_tsne = pd.DataFrame(tsne_results, columns=['Axis 1', 'Axis 2'])
+df_tsne['Provincia'] = provinces
 
 
-# Applica t-SNE
-tsne = TSNE(n_components=2, perplexity=2,random_state=42)
-tsne_results = tsne.fit_transform(df_scaled)
-
-
-region_means['tsne-2d-one'] = tsne_results[:,0]
-region_means['tsne-2d-two'] = tsne_results[:,1]
-
- # Clustering dei dati trasformati dalla t-SNE
-kmeans = KMeans(n_clusters=3, random_state=42)
-region_means['cluster'] = kmeans.fit_predict(tsne_results)
-labels = region_means['cluster']
-
-# Visualizzare i risultati
 plt.figure(figsize=(10,8))
 sns.scatterplot(
-    x='tsne-2d-one', y='tsne-2d-two',
-    hue=labels,
-    data=region_means,
-    legend="full",
-    alpha=0.8
+    x='Axis 1', y='Axis 2',
+    data=df_tsne,
+    legend=False
 )
 
-for i,regione in enumerate(region_means['Provincia']):
-    
-    plt.annotate(regione, (region_means['tsne-2d-one'][i], region_means['tsne-2d-two'][i]))
-plt.title("t-SNE ")
+
+for i, province in enumerate(df_tsne['Provincia']):
+    plt.annotate(province, (df_tsne['Axis 1'][i], df_tsne['Axis 2'][i]))
+
+plt.title("t-SNE")
 plt.show()
 
 
-
-df_tsne = pd.DataFrame(tsne_results, columns=['Axis 1', 'Axis 2'])
-df_tsne['Provincia'] = region_means['Provincia']
-df_tsne['no2']=region_means['no2']
-df_tsne['pm10']=region_means['pm10']
-df_tsne['pm25']=region_means['pm25']
-df_tsne['o3']=region_means['o3']
-
-
-# # # Salvataggio del DataFrame in un file CSV
+df_tsne = pd.concat([df_tsne, data_numeric[selected_columns].reset_index(drop=True)], axis=1)
 df_tsne.to_csv('tsne-results/Province/tsne_results_2010.csv', index=False)
 
 

@@ -584,7 +584,8 @@ return (
           '&:hover': { bgcolor: 'transparent' },
           transform: 'scale(0.8)',
           padding: '0px',
-          margin: '0px'
+          margin: '0px',
+          
 
         }} checked={showLow}
           onChange={() => setShowLow(!showLow)} defaultChecked color="success" />
