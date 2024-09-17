@@ -14,7 +14,7 @@ capture an overview of the last 10 years about the
 situation of Italy.
 
 
-![Tool](va-project/public/Tool.png)
+![Tool](va-project/public/Tool_.png)
 
 ## Prerequisites
 
