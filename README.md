@@ -13,6 +13,7 @@ with higher concentration of some pollutant, or to
 capture an overview of the last 10 years about the
 situation of Italy.
 
+
 ![Tool](va-project/public/Tool.png)
 
 ## Prerequisites
