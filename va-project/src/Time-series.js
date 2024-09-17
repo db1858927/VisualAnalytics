@@ -201,7 +201,10 @@ const LineChart = ({ selectedRegion, pollutant, setYears }) => {
 
                             
                             svgElement.select(".y-axis-label")
-                                .text(`Average oncentration of all pollutants (µg/m³)`);
+                                .text(`Average concentration of all pollutants (µg/m³)`);
+                            
+                          
+                               
 
                             
                             svgElement.append("path")
